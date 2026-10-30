@@ -196,7 +196,7 @@ add808(13.0, 36, 1.9);
 const out = b.map((x, i) => {
   const t = i / SR;
   const fadeOut = Math.min(1, Math.max(0, (DURATION - 0.1 - t) / 0.4));
-  return softClip(x * 0.8) * fadeOut * 0.92;
+  return softClip(x * 0.8) * fadeOut * 0.7;
 });
 const tmp = 'music/.gmotion-tmp.wav';
 writeWav(tmp, out);

@@ -346,12 +346,12 @@ export const gmotion = {
 	/** Marge de sécurité en haut et en bas (interface TikTok), en pixels */
 	safeMargin: 150,
 	volumes: {
-		music: 0.85,
+		music: 0.7,
 		keyClick: 0.4,
-		whoosh: 0.6,
+		whoosh: 0.55,
 		glitch: 0.45,
-		impact: 0.8,
-		swoosh: 0.7,
-		pop: 0.4,
+		impact: 0.65,
+		swoosh: 0.4,
+		pop: 0.22,
 	},
 };
