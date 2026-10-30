@@ -58,8 +58,9 @@ const ServicesSound: React.FC = () => {
 			))}
 			<Sfx at={w.from + w.phoneAt - 4} file="sfx/whoosh.wav" volume={vol.whoosh * 0.8} />
 			{/* Programmation : impact sur le drop, clics, swoosh de la transformation */}
-			<Sfx at={c.from - 6} file="sfx/whoosh.wav" volume={vol.whoosh} />
-			<Sfx at={c.from + 2} file="sfx/impact.wav" volume={vol.impact} />
+			<Sfx at={c.from - 6} file="sfx/whoosh.wav" volume={vol.whoosh * 0.7} />
+			{/* La musique a déjà son coup grave sur le drop : l'impact reste plus discret pour ne pas saturer */}
+			<Sfx at={c.from + 2} file="sfx/impact.wav" volume={vol.impact * 0.5} />
 			{clicks.map((f, i) => (
 				<Sfx key={`k${i}`} at={f} file={`sfx/key-${(i % 4) + 1}.wav`} volume={vol.keyClick * 0.8} />
 			))}
