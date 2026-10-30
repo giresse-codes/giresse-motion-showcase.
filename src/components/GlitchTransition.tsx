@@ -11,13 +11,15 @@ type Props = {
 	mode?: 'glitch' | 'flash';
 	/** Couleurs du flash (centre → bord) */
 	flashColors?: [string, string];
+	/** Nombre de tranches décalées (chaque tranche re-rend la scène : coûteux) */
+	slices?: number;
 	children?: React.ReactNode;
 };
 
 const SLICES = 7;
 
 // Transition spectaculaire : glitch numérique puis flash lumineux.
-export const GlitchTransition: React.FC<Props> = ({at, duration = 14, mode = 'glitch', flashColors, children}) => {
+export const GlitchTransition: React.FC<Props> = ({at, duration = 14, mode = 'glitch', flashColors, slices = SLICES, children}) => {
 	const frame = useCurrentFrame();
 	const local = frame - at;
 	const active = local >= 0 && local <= duration;
@@ -51,7 +53,7 @@ export const GlitchTransition: React.FC<Props> = ({at, duration = 14, mode = 'gl
 				{children}
 			</AbsoluteFill>
 			{/* Tranches horizontales décalées */}
-			{new Array(SLICES).fill(0).map((_, i) => {
+			{new Array(slices).fill(0).map((_, i) => {
 				const top = random(`top-${i}-${Math.floor(frame / 2)}`) * 100;
 				const h = 2 + random(`h-${i}-${frame}`) * 9;
 				return (

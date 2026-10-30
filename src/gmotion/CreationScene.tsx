@@ -110,7 +110,7 @@ export const CreationScene: React.FC = () => {
 
 	const curveLen = 2200;
 	return (
-		<GlitchTransition at={-2} duration={c.glitchIn} flashColors={[colors.cyan, colors.electric]}>
+		<GlitchTransition at={-2} duration={c.glitchIn} slices={3} flashColors={[colors.cyan, colors.electric]}>
 			<Camera3D
 				perspective={1600}
 				keys={[

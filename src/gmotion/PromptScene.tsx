@@ -25,7 +25,7 @@ export const PromptScene: React.FC = () => {
 	const dots = [0, 1, 2].map((i) => 0.3 + 0.7 * Math.abs(Math.sin((frame - p.sendAt) / 4 - i * 0.7)));
 
 	return (
-		<GlitchTransition at={p.duration - 14} duration={14} flashColors={[colors.cyan, colors.electric]}>
+		<GlitchTransition at={p.duration - 14} duration={14} slices={3} flashColors={[colors.cyan, colors.electric]}>
 			<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', perspective: 1800}}>
 				<div
 					style={{
