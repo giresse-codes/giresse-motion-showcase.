@@ -302,3 +302,56 @@ export const mix = {
 	riser: 0.5,
 	pop: 0.4,
 };
+
+// =============================================================================
+//  PUB « GMotionPromo » — 1080x1920, 30 images/s, 15 secondes, sans voix off.
+//  Textes, contact et couleurs modifiables ici.
+// =============================================================================
+export const gmotion = {
+	brandName: 'GMotion Studio',
+	logo: 'logo-G.svg',
+	colors: {
+		night: '#050B1F',
+		electric: '#1F5BFF',
+		cyan: '#5BC8FF',
+		white: '#FFFFFF',
+		muted: '#8FA3C8',
+		whatsapp: '#25D366',
+	},
+	whatsapp: '+237 673 236 084',
+	/** Musique (à remplacer) et tempo : les plans et les accents sont calés sur ce BPM */
+	music: 'music.mp3',
+	bpm: 120,
+	/** Décalage (en secondes) du premier temps fort dans ta musique */
+	beatOffset: 0,
+	hook: ['Ta', 'marque', 'mérite', 'de', 'BOUGER.'],
+	prompt: 'Anime mon logo pour une pub de lancement',
+	assistantName: 'GMotion IA',
+	assistantGreeting: 'Salut ! Qu’est-ce qu’on anime aujourd’hui ?',
+	creationLabel: 'Création en cours',
+	timelineTracks: ['Logo', 'Échelle', 'Rotation', 'Opacité', 'Lueur'],
+	/** Entreprise fictive dont le logo est animé */
+	client: {
+		name: 'NOVA',
+		sector: 'Boissons énergétiques',
+		adTitle: 'Nouvelle saveur',
+		adSubtitle: 'Disponible dès maintenant',
+		adCta: 'Goûte l’énergie',
+	},
+	resultLabel: 'Pub de lancement prête',
+	before: 'AVANT',
+	after: 'APRÈS',
+	services: 'Motion design • Pubs animées • Logos animés',
+	ctaButton: 'Écris-moi sur WhatsApp',
+	/** Marge de sécurité en haut et en bas (interface TikTok), en pixels */
+	safeMargin: 150,
+	volumes: {
+		music: 0.85,
+		keyClick: 0.4,
+		whoosh: 0.6,
+		glitch: 0.45,
+		impact: 0.8,
+		swoosh: 0.7,
+		pop: 0.4,
+	},
+};

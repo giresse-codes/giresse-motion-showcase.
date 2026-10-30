@@ -9,13 +9,15 @@ type Props = {
 	duration?: number;
 	/** 'glitch' : séparation RVB + tranches décalées ; 'flash' : éclair lumineux seul */
 	mode?: 'glitch' | 'flash';
+	/** Couleurs du flash (centre → bord) */
+	flashColors?: [string, string];
 	children?: React.ReactNode;
 };
 
 const SLICES = 7;
 
 // Transition spectaculaire : glitch numérique puis flash lumineux.
-export const GlitchTransition: React.FC<Props> = ({at, duration = 14, mode = 'glitch', children}) => {
+export const GlitchTransition: React.FC<Props> = ({at, duration = 14, mode = 'glitch', flashColors, children}) => {
 	const frame = useCurrentFrame();
 	const local = frame - at;
 	const active = local >= 0 && local <= duration;
@@ -28,7 +30,7 @@ export const GlitchTransition: React.FC<Props> = ({at, duration = 14, mode = 'gl
 		return (
 			<AbsoluteFill>
 				{children}
-				<FlashOverlay amount={flash} />
+				<FlashOverlay amount={flash} colors={flashColors} />
 			</AbsoluteFill>
 		);
 	}
@@ -73,18 +75,18 @@ export const GlitchTransition: React.FC<Props> = ({at, duration = 14, mode = 'gl
 					mixBlendMode: 'screen',
 				}}
 			/>
-			<FlashOverlay amount={flash} />
+			<FlashOverlay amount={flash} colors={flashColors} />
 		</AbsoluteFill>
 	);
 };
 
-export const FlashOverlay: React.FC<{amount: number}> = ({amount}) => {
+export const FlashOverlay: React.FC<{amount: number; colors?: [string, string]}> = ({amount, colors = [theme.colors.cyan, theme.colors.violet]}) => {
 	if (amount <= 0) return null;
 	return (
 		<AbsoluteFill style={{pointerEvents: 'none'}}>
 			<AbsoluteFill
 				style={{
-					background: `radial-gradient(circle at 50% 50%, #ffffff 0%, ${theme.colors.cyan} 25%, ${theme.colors.violet} 55%, transparent 80%)`,
+					background: `radial-gradient(circle at 50% 50%, #ffffff 0%, ${colors[0]} 25%, ${colors[1]} 55%, transparent 80%)`,
 					opacity: amount,
 					transform: `scale(${0.6 + amount})`,
 					mixBlendMode: 'screen',
@@ -100,7 +102,7 @@ export const FlashOverlay: React.FC<{amount: number}> = ({amount}) => {
 					top: '50%',
 					height: 6,
 					transform: `translateY(-50%) scaleY(${1 + amount * 6})`,
-					background: `linear-gradient(90deg, transparent, ${theme.colors.cyan}, #fff, ${theme.colors.cyan}, transparent)`,
+					background: `linear-gradient(90deg, transparent, ${colors[0]}, #fff, ${colors[0]}, transparent)`,
 					opacity: amount,
 					filter: 'blur(2px)',
 				}}

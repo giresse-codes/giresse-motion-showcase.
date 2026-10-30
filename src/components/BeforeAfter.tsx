@@ -14,10 +14,13 @@ type Props = {
 	/** Image de début du balayage */
 	wipeStart?: number;
 	wipeDuration?: number;
+	/** Couleurs de la ligne de balayage et de l'étiquette « après » */
+	accents?: [string, string, string];
 };
 
 // Écran partagé avec balayage : à gauche la version basique, à droite la version transformée.
-export const BeforeAfter: React.FC<Props> = ({before, after, beforeLabel = 'Avant', afterLabel = 'Après', width, height, wipeStart = 6, wipeDuration = 30}) => {
+export const BeforeAfter: React.FC<Props> = ({before, after, beforeLabel = 'Avant', afterLabel = 'Après', width, height, wipeStart = 6, wipeDuration = 30, accents = [theme.colors.cyan, theme.colors.blue, theme.colors.violet]}) => {
+	const [accentA, accentMid, accentB] = accents;
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const {u} = useLayout();
@@ -51,7 +54,7 @@ export const BeforeAfter: React.FC<Props> = ({before, after, beforeLabel = 'Avan
 				overflow: 'hidden',
 				transform: `scale(${0.9 + 0.1 * enter})`,
 				opacity: enter,
-				boxShadow: `0 ${40 * u}px ${120 * u}px rgba(0,0,0,0.7), 0 0 ${100 * u}px rgba(139,92,246,0.35)`,
+				boxShadow: `0 ${40 * u}px ${120 * u}px rgba(0,0,0,0.7), 0 0 ${100 * u}px ${accentB}59`,
 				border: `1px solid ${theme.colors.glassBorder}`,
 			}}
 		>
@@ -65,8 +68,8 @@ export const BeforeAfter: React.FC<Props> = ({before, after, beforeLabel = 'Avan
 					bottom: 0,
 					left: split - 3 * u,
 					width: 6 * u,
-					background: `linear-gradient(180deg, ${theme.colors.cyan}, #fff, ${theme.colors.violet})`,
-					boxShadow: `0 0 ${30 * u}px ${8 * u}px rgba(34,211,238,0.7)`,
+					background: `linear-gradient(180deg, ${accentA}, #fff, ${accentB})`,
+					boxShadow: `0 0 ${30 * u}px ${8 * u}px ${accentA}B3`,
 				}}
 			/>
 			<div
@@ -79,8 +82,8 @@ export const BeforeAfter: React.FC<Props> = ({before, after, beforeLabel = 'Avan
 					transform: 'translate(-50%, -50%)',
 					borderRadius: '50%',
 					background: 'rgba(5,6,15,0.85)',
-					border: `${3 * u}px solid ${theme.colors.cyan}`,
-					boxShadow: `0 0 ${30 * u}px ${theme.colors.cyan}`,
+					border: `${3 * u}px solid ${accentA}`,
+					boxShadow: `0 0 ${30 * u}px ${accentA}`,
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center',
@@ -98,9 +101,9 @@ export const BeforeAfter: React.FC<Props> = ({before, after, beforeLabel = 'Avan
 				style={{
 					...labelStyle,
 					right: 24 * u,
-					background: `linear-gradient(135deg, ${theme.colors.blue}, ${theme.colors.violet})`,
+					background: `linear-gradient(135deg, ${accentMid}, ${accentB})`,
 					color: '#fff',
-					boxShadow: `0 0 ${24 * u}px rgba(139,92,246,0.8)`,
+					boxShadow: `0 0 ${24 * u}px ${accentB}CC`,
 					opacity: interpolate(split / width, [0.65, 0.8], [1, 0], clamp),
 				}}
 			>

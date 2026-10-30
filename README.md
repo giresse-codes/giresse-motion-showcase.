@@ -4,6 +4,8 @@ Vidéos publicitaires **« un seul prompt, et voilà le résultat »**, réalis�
 [Remotion](https://www.remotion.dev) en TypeScript, pour présenter mes services
 (motion design, développement web, programmation) aux entreprises.
 
+Ce dépôt contient aussi la pub **GMotionPromo** (voir plus bas).
+
 Trois vidéos de 20 secondes (30 images/s), chacune en **9:16 (1080×1920)** et en
 **16:9 (1920×1080)** :
 
@@ -96,7 +98,7 @@ ton image dans `public/logo/`).
 | Clics de clavier     | `public/sfx/key-1.wav` … `key-4.wav`      |
 | Whoosh               | `public/sfx/whoosh.wav`                   |
 | Impact grave         | `public/sfx/impact.wav`                   |
-| Glitch, riser, pop   | `public/sfx/glitch.wav`, `riser.wav`, `pop.wav` |
+| Glitch, riser, pop, swoosh | `public/sfx/glitch.wav`, `riser.wav`, `pop.wav`, `swoosh.wav` |
 | Voix off             | `public/voiceover/*.mp3` (à fournir)      |
 
 Les effets et la musique sont **synthétisés par un script** (libres de droits) ;
@@ -131,6 +133,40 @@ src/
 │   ├── AnimatedLogo.tsx, Background.tsx, Particles.tsx, SoundDesign.tsx
 └── results/                ← les résultats (pub, site, tableau de bord) et leurs versions « avant »
 ```
+
+## Pub GMotionPromo (GMotion Studio)
+
+Publicité verticale **1080×1920, 30 images/s, 15 secondes exactement, sans voix off**,
+pour les services de motion design de GMotion Studio.
+
+```bash
+npx remotion render GMotionPromo out/gmotion-promo.mp4
+```
+
+(ou `npm run render:gmotion`)
+
+| Temps      | Plan              | Contenu                                                                        |
+| ---------- | ----------------- | ------------------------------------------------------------------------------ |
+| 0 → 2 s    | Accroche          | Noir, flash cyan, « Ta marque mérite de BOUGER. » mot par mot + tremblement    |
+| 2 → 5 s    | Prompt            | Chat en verre dépoli, frappe lettre par lettre, clics, zoom avant progressif   |
+| 5 → 8 s    | Création          | Glitch + whoosh, timeline 3D, keyframes néon, courbes de Bézier, étincelles    |
+| 8 → 11 s   | Résultat          | Impact + flash blanc, logo NOVA qui s'assemble, téléphone 3D qui pivote        |
+| 11 → 13 s  | Avant / après     | Affiche terne contre pub animée, balayage lumineux                             |
+| 13 → 15 s  | Appel à l'action  | Logo G dessiné trait par trait, nom, services, bouton WhatsApp pulsant         |
+
+Les 0,5 dernière seconde est une image fixe et propre. Tout le texte reste à
+plus de 150 px du haut et du bas (zones de l'interface TikTok).
+
+- **Textes, numéro, couleurs, tempo et volumes** : objet `gmotion` dans `src/config.ts`.
+- **Logo** : `public/logo-G.svg`. Le tracé animé du G est dans `src/gmotion/CtaScene.tsx`.
+- **Musique** : `public/music.mp3`. Le fichier fourni est une piste électro/trap
+  provisoire à 120 BPM (générée par `npm run sfx:gmotion`) : remplace-le par ta
+  musique en gardant le même nom. Les plans changent à 2, 5, 8, 11 et 13 s, soit
+  sur les temps forts d'un morceau à 120 BPM. Si ta musique a un autre tempo,
+  règle `bpm` et `beatOffset` (temps du premier temps fort, en secondes) dans
+  `config.ts` : les pulsations de lumière se recalent dessus.
+- **Effets sonores** : clics clavier, whoosh, glitch, impact, swoosh (`public/sfx/`).
+- Code de la pub : `src/gmotion/` (une scène par fichier, timeline dans `timeline.ts`).
 
 ## Vérifier que tout compile
 

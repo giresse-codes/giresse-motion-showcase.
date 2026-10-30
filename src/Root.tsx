@@ -3,6 +3,8 @@ import {Composition, Folder} from 'remotion';
 import {videos} from './config';
 import {DURATION, FPS} from './lib/timeline';
 import {PromoVideo} from './PromoVideo';
+import {GMotionPromo} from './gmotion/GMotionPromo';
+import {DURATION as GMOTION_DURATION, FPS as GMOTION_FPS} from './gmotion/timeline';
 
 const FORMATS = [
 	{suffix: 'Vertical', width: 1080, height: 1920},
@@ -28,5 +30,13 @@ export const RemotionRoot: React.FC = () => (
 				))}
 			</Folder>
 		))}
+		<Composition
+			id="GMotionPromo"
+			component={GMotionPromo}
+			durationInFrames={GMOTION_DURATION}
+			fps={GMOTION_FPS}
+			width={1080}
+			height={1920}
+		/>
 	</>
 );
