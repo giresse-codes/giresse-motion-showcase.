@@ -1,1 +1,0 @@
-# giresse-motion-showcase.
