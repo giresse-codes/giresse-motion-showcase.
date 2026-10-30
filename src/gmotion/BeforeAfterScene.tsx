@@ -1,47 +1,61 @@
 import React from 'react';
-import {AbsoluteFill, spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
 import {gmotion} from '../config';
-import {videoPalette as colors} from '../theme';
-import {springs} from '../lib/anim';
-import {BeforeAfter} from '../components/BeforeAfter';
+import {premium} from '../theme';
+import {fonts} from './fonts';
+import {ease, Eyebrow, fadeOut, fadeUp} from './premium';
 import {G} from './timeline';
 import {ClientAd, ClientPosterBefore} from './ClientBrand';
 
-const W = 940;
-const H = 1380;
+const W = 900;
+const H = 1200;
 // Taille virtuelle de l'affiche, mise à l'échelle dans le panneau
-const VW = 470;
+const VW = 450;
 const VH = (VW * H) / W;
 
-// 11 → 13 s : écran partagé avec balayage lumineux, affiche terne contre pub animée.
+const Label: React.FC<{text: string; side: 'left' | 'right'}> = ({text, side}) => (
+	<div
+		style={{
+			position: 'absolute',
+			top: 28,
+			[side]: 28,
+			padding: '10px 22px',
+			borderRadius: 999,
+			background: 'rgba(11,26,51,0.72)',
+			color: premium.text,
+			fontFamily: fonts.body,
+			fontWeight: 500,
+			fontSize: 24,
+			letterSpacing: 4,
+			textTransform: 'uppercase',
+		}}
+	>
+		{text}
+	</div>
+);
+
+// 11 → 13 s : écran partagé ; un masque glisse lentement de l'affiche terne vers la pub animée.
 export const BeforeAfterScene: React.FC = () => {
 	const frame = useCurrentFrame();
-	const {fps} = useVideoConfig();
 	const b = G.beforeAfter;
-	const enter = spring({frame, fps, config: {damping: 15, mass: 0.8, stiffness: 100}});
-	const exit = spring({frame: frame - (b.duration - 8), fps, config: springs.snappy});
-	const wrap = (node: React.ReactNode) => <div style={{width: VW, height: VH, transform: `scale(${W / VW})`, transformOrigin: '0 0'}}>{node}</div>;
+	const split = interpolate(frame, [b.wipeStart, b.wipeStart + b.wipeDuration], [1, 0.5], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: ease});
+	const x = split * W;
+	const wrap = (node: React.ReactNode) => <div style={{position: 'absolute', inset: 0, width: VW, height: VH, transform: `scale(${W / VW})`, transformOrigin: '0 0'}}>{node}</div>;
+
 	return (
-		<AbsoluteFill
-			style={{
-				alignItems: 'center',
-				justifyContent: 'center',
-				transform: `translateY(${(1 - enter) * 900 - exit * 700}px) rotate(${(1 - enter) * 8}deg) scale(${1 - exit * 0.3})`,
-				opacity: 1 - exit,
-				filter: exit > 0.01 ? `blur(${exit * 16}px)` : undefined,
-			}}
-		>
-			<BeforeAfter
-				width={W}
-				height={H}
-				wipeStart={b.wipeStart}
-				wipeDuration={b.wipeDuration}
-				beforeLabel={gmotion.before}
-				afterLabel={gmotion.after}
-				accents={[colors.mint, colors.mint, colors.violet]}
-				before={wrap(<ClientPosterBefore width={VW} height={VH} />)}
-				after={wrap(<ClientAd frame={frame + 60} width={VW} height={VH} />)}
-			/>
+		<AbsoluteFill style={fadeOut(frame, b.duration - 10, 10, 24)}>
+			<Eyebrow text={gmotion.steps.beforeAfter} frame={frame} at={2} style={{position: 'absolute', top: gmotion.safeMargin + 40, left: 0, right: 0}} />
+			<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', paddingTop: 70}}>
+				<div style={{width: W, height: H, position: 'relative', borderRadius: 32, overflow: 'hidden', border: `1px solid ${premium.line}`, boxShadow: premium.shadow, ...fadeUp(frame, 0, 20, 40)}}>
+					{wrap(<ClientAd frame={frame + 60} width={VW} height={VH} />)}
+					<div style={{position: 'absolute', inset: 0, clipPath: `inset(0 ${W - x}px 0 0)`}}>{wrap(<ClientPosterBefore width={VW} height={VH} />)}</div>
+					<div style={{position: 'absolute', top: 0, bottom: 0, left: x - 1, width: 2, background: premium.gold}} />
+					<div style={{opacity: interpolate(split, [0.55, 0.75], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}}>
+						<Label text={gmotion.after} side="right" />
+					</div>
+					<Label text={gmotion.before} side="left" />
+				</div>
+			</AbsoluteFill>
 		</AbsoluteFill>
 	);
 };

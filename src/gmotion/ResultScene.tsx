@@ -1,134 +1,49 @@
 import React from 'react';
-import {AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
-import {CameraMotionBlur} from '@remotion/motion-blur';
+import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
 import {gmotion} from '../config';
-import {videoPalette} from '../theme';
-import {clamp, springs} from '../lib/anim';
+import {premium} from '../theme';
 import {DeviceMockup, VIEWPORTS} from '../components/DeviceMockup';
 import {fonts} from './fonts';
-import {GFlash, GPill} from './Atmosphere';
+import {ease, Eyebrow, fadeOut, fadeUp, progress} from './premium';
 import {G} from './timeline';
-import {ClientAd, ClientMark, ClientWordmark, flyIn} from './ClientBrand';
+import {ClientAd, ClientMark, ClientWordmark, slideIn} from './ClientBrand';
 import {useClient} from './client';
 
-const MARK = 440;
-
-const LogoAssembly: React.FC = () => {
-	const frame = useCurrentFrame();
-	const {fps} = useVideoConfig();
-	const r = G.result;
-	const {client, palette} = useClient();
-	const lock = spring({frame: frame - r.lockAt, fps, config: springs.snappy});
-	const lockPulse = interpolate(frame - r.lockAt, [0, 4, 16], [0, 1, 0], clamp);
-	return (
-		<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 30}}>
-			<div style={{position: 'relative'}}>
-				{/* Onde de verrouillage */}
-				<div
-					style={{
-						position: 'absolute',
-						left: '50%',
-						top: '50%',
-						width: MARK,
-						height: MARK,
-						marginLeft: -MARK / 2,
-						marginTop: -MARK / 2,
-						borderRadius: '50%',
-						border: `6px solid ${palette.primary}`,
-						transform: `scale(${0.8 + lock * 0.9})`,
-						opacity: lockPulse,
-						boxShadow: `0 0 60px ${palette.secondary}`,
-					}}
-				/>
-				<ClientMark size={MARK} glow={1 + lockPulse * 2} piece={(i) => flyIn(frame, fps, `p${i}`, r.assembleAt + i * 2, 220)} />
-			</div>
-			<ClientWordmark maxSize={150} maxWidth={940} piece={(i) => flyIn(frame, fps, `w${i}`, r.assembleAt + 8 + i * 2, 900)} />
-			<div style={{fontFamily: fonts.body, fontWeight: 600, fontSize: 40, color: palette.light, opacity: interpolate(frame, [r.lockAt, r.lockAt + 8], [0, 1], clamp), letterSpacing: 4, textTransform: 'uppercase'}}>
-				{client.sector}
-			</div>
-		</div>
-	);
-};
-
-// 8 → 11 s : impact + flash blanc, le logo s'assemble puis s'affiche dans un téléphone 3D.
+// 8 → 11 s : le logo du client s'assemble en douceur, puis la pub s'affiche dans un téléphone qui pivote lentement.
 export const ResultScene: React.FC = () => {
 	const frame = useCurrentFrame();
-	const {fps} = useVideoConfig();
 	const r = G.result;
-	const {palette} = useClient();
-	const toPhone = spring({frame: frame - r.toPhoneAt, fps, config: springs.camera});
-	const phoneIn = spring({frame: frame - (r.toPhoneAt - 2), fps, config: {damping: 15, mass: 0.9, stiffness: 80}});
-	const exit = spring({frame: frame - (r.duration - 10), fps, config: springs.snappy});
-	const pill = spring({frame: frame - (r.toPhoneAt + 12), fps, config: springs.bouncy});
-	const ry = Math.sin((frame - r.toPhoneAt) / 22) * 14;
-	const rx = 6 + Math.cos((frame - r.toPhoneAt) / 30) * 3;
-	const glare = interpolate(ry, [-14, 14], [-60, 160]);
-	const assembling = frame < r.lockAt + 6;
-
-	const logo = (
-		<AbsoluteFill
-			style={{
-				alignItems: 'center',
-				justifyContent: 'center',
-				transform: `translateY(${-toPhone * 520}px) scale(${1 - toPhone * 0.7})`,
-				opacity: 1 - toPhone,
-			}}
-		>
-			<LogoAssembly />
-		</AbsoluteFill>
-	);
+	const {client, palette} = useClient();
+	const phone = progress(frame, r.toPhoneAt + 2, 26);
+	const ry = interpolate(frame, [r.toPhoneAt, r.duration], [-8, 4], {easing: ease});
 
 	return (
-		<AbsoluteFill style={{transform: `scale(${1 - exit * 0.25})`, opacity: 1 - exit, filter: exit > 0.01 ? `blur(${exit * 14}px)` : undefined}}>
-			{assembling ? (
-				<CameraMotionBlur shutterAngle={200} samples={6}>
-					{logo}
-				</CameraMotionBlur>
-			) : (
-				logo
-			)}
-			{frame >= r.toPhoneAt - 2 && (
-				<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', perspective: 1800}}>
-					{/* Lueur néon au sol */}
-					<div
-						style={{
-							position: 'absolute',
-							bottom: 230,
-							width: 700,
-							height: 120,
-							borderRadius: '50%',
-							background: `radial-gradient(ellipse, ${palette.primary}AA, transparent 70%)`,
-							filter: 'blur(20px)',
-							opacity: phoneIn,
-						}}
-					/>
-					<div
-						style={{
-							position: 'relative',
-							transform: `translateY(${(1 - phoneIn) * 1500 + 40}px) rotateY(${ry}deg) rotateX(${rx}deg) rotateZ(${(1 - phoneIn) * -14}deg)`,
-							transformStyle: 'preserve-3d',
-						}}
-					>
-						<DeviceMockup type="phone" width={590} glowColor={palette.primary}>
-							<ClientAd frame={frame - r.toPhoneAt - 4} {...VIEWPORTS.phone} />
-						</DeviceMockup>
-						{/* Reflet mobile qui suit la rotation */}
-						<div
-							style={{
-								position: 'absolute',
-								inset: 0,
-								borderRadius: 94,
-								pointerEvents: 'none',
-								background: `linear-gradient(110deg, transparent ${glare - 40}%, rgba(255,255,255,0.22) ${glare}%, transparent ${glare + 25}%)`,
-							}}
-						/>
+		<AbsoluteFill style={fadeOut(frame, r.duration - 12, 12, 24)}>
+			<Eyebrow text={gmotion.steps.result} frame={frame} at={4} style={{position: 'absolute', top: gmotion.safeMargin + 90, left: 0, right: 0}} />
+			{/* 1. Assemblage du logo */}
+			{frame < r.toPhoneAt + 16 && (
+				<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', ...fadeOut(frame, r.toPhoneAt - 2, 16, 40)}}>
+					<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40}}>
+						<ClientMark size={360} piece={(i) => slideIn(frame, `p${i}`, r.assembleAt + i * 3, 16)} />
+						<div style={fadeUp(frame, r.lockAt - 6, 18, 20)}>
+							<ClientWordmark maxSize={72} maxWidth={820} color={premium.text} />
+						</div>
+						<div style={{fontFamily: fonts.body, fontSize: 28, letterSpacing: 4, textTransform: 'uppercase', color: premium.textMuted, ...fadeUp(frame, r.lockAt, 18, 14)}}>{client.sector}</div>
 					</div>
 				</AbsoluteFill>
 			)}
-			<GPill enter={pill} font={fonts.display} accent={palette.primary}>
-				✨ {gmotion.resultLabel}
-			</GPill>
-			<GFlash at={r.flashAt} duration={12} color={videoPalette.white} />
+			{/* 2. La pub dans le téléphone */}
+			{frame >= r.toPhoneAt && (
+				<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', perspective: 2400}}>
+					<div style={{opacity: phone, transform: `translateY(${(1 - phone) * 90 + 40}px) rotateY(${ry}deg)`}}>
+						<DeviceMockup type="phone" width={560} glowColor="#000000">
+							<ClientAd frame={frame - r.toPhoneAt - 6} {...VIEWPORTS.phone} />
+						</DeviceMockup>
+					</div>
+					{/* Ombre douce au sol, aux tons de la marque */}
+					<div style={{position: 'absolute', bottom: 210, width: 520, height: 60, borderRadius: '50%', background: `radial-gradient(ellipse, ${palette.primary}33, transparent 70%)`, opacity: phone}} />
+				</AbsoluteFill>
+			)}
 		</AbsoluteFill>
 	);
 };

@@ -134,82 +134,78 @@ src/
 └── results/                ← les résultats (pub, site, tableau de bord) et leurs versions « avant »
 ```
 
-## Pubs GMotionPromo et GMotionPromo2 (GMotion Studio)
+## Pubs GMotion (GMotion Studio)
 
-Publicité verticale **1080×1920, 30 images/s, 15 secondes exactement, sans voix off**,
-pour les services de motion design de GMotion Studio.
+Trois publicités verticales **1080×1920, 30 images/s, 15 secondes exactement, sans voix off**,
+dans un style sobre et haut de gamme (type agence premium).
 
 ```bash
 npx remotion render GMotionPromo out/gmotion-promo.mp4
 npx remotion render GMotionPromo2 out/gmotion-promo-2.mp4
-```
-
-(ou `npm run render:gmotion` et `npm run render:gmotion2`)
-
-Les deux pubs ont le même déroulé ; seul le client fictif change :
-`GMotionPromo` anime la marque de boissons **NOVA** (vert acide et menthe),
-`GMotionPromo2` la **Boulangerie Le Wouri** (brun doré, crème et orange).
-Pour en créer une autre, ajoute un client dans `gmotionClients` (`config.ts`)
-et sa charte dans `clientPalettes` (`theme.ts`).
-
-| Temps      | Plan              | Contenu                                                                        |
-| ---------- | ----------------- | ------------------------------------------------------------------------------ |
-| 0 → 2 s    | Accroche          | Noir, flash cyan, « Ta marque mérite de BOUGER. » mot par mot + tremblement    |
-| 2 → 5 s    | Prompt            | Chat en verre dépoli, frappe lettre par lettre, clics, zoom avant progressif   |
-| 5 → 8 s    | Création          | Glitch + whoosh, timeline 3D, keyframes néon, courbes de Bézier, étincelles    |
-| 8 → 11 s   | Résultat          | Impact + flash blanc, logo NOVA qui s'assemble, téléphone 3D qui pivote        |
-| 11 → 13 s  | Avant / après     | Affiche terne contre pub animée, balayage lumineux                             |
-| 13 → 15 s  | Appel à l'action  | Logo G dessiné trait par trait, nom, services, bouton WhatsApp pulsant         |
-
-Les 0,5 dernière seconde est une image fixe et propre. Tout le texte reste à
-plus de 150 px du haut et du bas (zones de l'interface TikTok).
-
-- **Textes, numéro, tempo et volumes** : objet `gmotion` dans `src/config.ts`,
-  clients fictifs dans `gmotionClients`.
-- **Couleurs** (`src/theme.ts`), en deux palettes séparées :
-  - `brandLogo` (#050B1F, #1F5BFF, #5BC8FF, blanc) : réservée au logo G et au
-    plan final. Le logo n'est jamais recoloré ;
-  - `videoPalette` : tout le reste de la vidéo (noir #0A0A0F, violet, magenta,
-    orange, jaune, menthe ; mots clés en jaune ou magenta) ;
-  - `sceneColors` : couleur dominante de chaque plan (accroche magenta, prompt
-    violet, timeline orange/jaune, avant/après menthe, plan final bleu du logo).
-    Le plan « résultat » prend la charte du client (`clientPalettes`).
-    Le fond passe d'une couleur à l'autre en fondu à chaque changement de plan.
-- **Logo** : `public/logo-G.svg`. Le tracé animé du G est dans `src/gmotion/CtaScene.tsx`.
-- **Musique** : `public/music.mp3`. Le fichier fourni est une piste électro/trap
-  provisoire à 120 BPM (générée par `npm run sfx:gmotion`) : remplace-le par ta
-  musique en gardant le même nom. Les plans changent à 2, 5, 8, 11 et 13 s, soit
-  sur les temps forts d'un morceau à 120 BPM. Si ta musique a un autre tempo,
-  règle `bpm` et `beatOffset` (temps du premier temps fort, en secondes) dans
-  `config.ts` : les pulsations de lumière se recalent dessus.
-- **Effets sonores** : clics clavier, whoosh, glitch, impact, swoosh (`public/sfx/`).
-- Code de la pub : `src/gmotion/` (une scène par fichier, timeline dans `timeline.ts`).
-
-## Pub GMotionServices (les 3 services de GMotion Studio)
-
-Publicité verticale **1080×1920, 30 images/s, 15 secondes exactement, sans voix off**,
-qui présente les trois services. Contact : +237 673 236 084 (wa.me/237673236084).
-
-```bash
 npx remotion render GMotionServices out/gmotion-services.mp4
 ```
 
-(ou `npm run render:services`)
+(ou `npm run render:gmotion`, `npm run render:gmotion2` et `npm run render:services`)
 
-| Temps      | Plan                 | Couleur dominante | Contenu                                                              |
-| ---------- | -------------------- | ----------------- | -------------------------------------------------------------------- |
-| 0 → 2 s    | Accroche             | magenta           | Flash, « Ton business mérite MIEUX qu’une affiche. » mot par mot      |
-| 2 → 5 s    | Motion design        | orange / jaune    | Logo d’Akwa Grill qui s’assemble, keyframes néon, particules          |
-| 5 → 8 s    | Sites web            | violet / magenta  | Glitch + whoosh, site construit bloc par bloc, puis sur téléphone     |
-| 8 → 11 s   | Applications & code  | vert menthe       | Code qui défile, transformé en tableau de bord animé                  |
-| 11 → 13 s  | Récap                | magenta / orange  | Les 3 résultats en grille qui pulsent sur le beat, « 1 studio. 3 expertises. » |
-| 13 → 15 s  | Final                | bleu du logo      | Logo G dessiné trait par trait, bouton WhatsApp, image fixe 0,5 s     |
+### Charte visuelle commune
 
-- Textes, entreprise fictive, site et code affichés : `gmotionServices` dans `src/config.ts`.
-- Couleurs de chaque plan : `serviceColors` dans `src/theme.ts` (le logo garde `brandLogo`).
-- Code de la pub : `src/gmotion/services/` (une scène par fichier, timeline dans `timeline.ts`).
-- Même musique (`public/music.mp3`, 120 BPM) et mêmes effets sonores que GMotionPromo :
-  le drop de la musique tombe sur le plan Programmation (8 s).
+- **Palette unique** (`premium` dans `src/theme.ts`) : fond bleu nuit #0B1A33 avec un
+  dégradé très léger vers #10234A, texte et surfaces blanc cassé #F5F7FA, bleu acier
+  #2F6FD6 en secondaire, et **or doux #C9A45C** en accent. L'or ne sert qu'à un mot clé
+  par plan, aux fines lignes de séparation et au bouton WhatsApp, jamais en grande surface.
+- **Logo** (`public/logo-G.svg`) : il garde ses propres couleurs (`brandLogo`) et n'est
+  jamais recoloré. Le tracé animé du G est dans `src/gmotion/CtaScene.tsx`.
+- **Animations** : fondus avec léger glissement vers le haut, glissements et masques en
+  ease-in-out, un seul mouvement principal à l'écran à la fois, caméra lente.
+  Aucun glitch, flash, tremblement, néon ni rebond.
+- **Typographie** : Inter, titres en SemiBold, beaucoup d'espace autour des éléments.
+- **Mini-pubs des clients fictifs** : chacune garde sa propre charte, en tons doux
+  (`clientPalettes`).
+- Les 0,5 dernière seconde est une image fixe. Tout le texte reste à plus de 150 px du
+  haut et du bas (zones de l'interface TikTok).
+- Dans les textes de `config.ts`, un mot entre `*astérisques*` passe en or.
+
+### GMotionPromo et GMotionPromo2
+
+Même déroulé ; seul le client fictif change : `GMotionPromo` anime la marque de
+boissons **NOVA** (vert sauge), `GMotionPromo2` la **Boulangerie Le Wouri**
+(caramel et crème). Pour en créer une autre, ajoute un client dans `gmotionClients`
+(`config.ts`) et sa charte dans `clientPalettes` (`theme.ts`).
+
+| Temps      | Plan              | Contenu                                                                   |
+| ---------- | ----------------- | ------------------------------------------------------------------------- |
+| 0 → 2 s    | Accroche          | « Ta marque mérite de bouger. », ligne par ligne                          |
+| 2 → 5 s    | Le brief          | Interface de chat, frappe lettre par lettre, zoom avant lent              |
+| 5 → 8 s    | La création       | Timeline épurée, tête de lecture or, courbes et keyframes                 |
+| 8 → 11 s   | Le résultat       | Le logo du client s'assemble, puis la pub apparaît sur un téléphone       |
+| 11 → 13 s  | Avant / après     | Masque qui glisse de l'affiche terne vers la pub, fine ligne or           |
+| 13 → 15 s  | Appel à l'action  | Logo G dessiné trait par trait, nom, services, bouton WhatsApp            |
+
+Textes, numéro, tempo et volumes : objet `gmotion` dans `src/config.ts`.
+Code : `src/gmotion/` (une scène par fichier, timeline dans `timeline.ts`).
+
+### GMotionServices
+
+Présente les trois services. Contact : +237 673 236 084 (wa.me/237673236084).
+
+| Temps      | Plan                 | Contenu                                                              |
+| ---------- | -------------------- | -------------------------------------------------------------------- |
+| 0 → 2 s    | Accroche             | « Ton business mérite mieux qu’une affiche. »                         |
+| 2 → 5 s    | Motion design        | Le logo d’Akwa Grill s’assemble, puis une timeline se lit             |
+| 5 → 8 s    | Sites web            | Site construit bloc par bloc dans un navigateur, puis sur téléphone   |
+| 8 → 11 s   | Applications & code  | Le code s’écrit, puis laisse place à un tableau de bord               |
+| 11 → 13 s  | Récap                | Les 3 résultats en grille, « 1 studio. 3 expertises. »                |
+| 13 → 15 s  | Final                | Logo G dessiné trait par trait, bouton WhatsApp                       |
+
+Textes, entreprise fictive, site et code affichés : `gmotionServices` dans `src/config.ts`.
+Code : `src/gmotion/services/`.
+
+### Son
+
+`public/music.mp3` est une piste provisoire à 120 BPM (générée par `npm run sfx:gmotion`) :
+remplace-la par ta musique en gardant le même nom. Les plans changent à 2, 5, 8, 11 et
+13 s, sur les temps forts d'un morceau à 120 BPM. Effets sonores discrets : clics clavier,
+whoosh, impact léger, swoosh sur le logo (`public/sfx/`).
 
 ## Vérifier que tout compile
 

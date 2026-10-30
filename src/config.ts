@@ -306,7 +306,7 @@ export const mix = {
 // =============================================================================
 //  PUB « GMotionPromo » — 1080x1920, 30 images/s, 15 secondes, sans voix off.
 //  Textes et contact modifiables ici (les couleurs sont dans theme.ts :
-//  brandLogo, videoPalette, sceneColors et clientPalettes).
+//  brandLogo, premium et clientPalettes). Un mot entre *astérisques* passe en or.
 // =============================================================================
 export type GMotionClient = {
 	/** Identifiant de la composition (GMotionPromo, GMotionPromo2…) */
@@ -343,7 +343,7 @@ export const gmotionClients: GMotionClient[] = [
 		compositionId: 'GMotionPromo2',
 		name: 'Le Wouri',
 		sector: 'Boulangerie artisanale',
-		adTitle: 'Pain chaud dès 6 h',
+		adTitle: 'Pain chaud dès 6\u00a0h',
 		adSubtitle: 'Bonapriso, Douala',
 		adCta: 'Commander',
 		palette: 'leWouri',
@@ -357,16 +357,18 @@ export const gmotion = {
 	brandName: 'GMotion Studio',
 	logo: 'logo-G.svg',
 	whatsapp: '+237 673 236 084',
-	/** Musique (à remplacer) et tempo : les plans et les accents sont calés sur ce BPM */
+	/** Musique (à remplacer) : les changements de plan (2, 5, 8, 11, 13 s) tombent sur les temps d'un morceau à 120 BPM */
 	music: 'music.mp3',
-	bpm: 120,
-	/** Décalage (en secondes) du premier temps fort dans ta musique */
-	beatOffset: 0,
-	/** Accroche ; le mot mis en valeur (jaune) est le dernier */
-	hook: ['Ta', 'marque', 'mérite', 'de', 'BOUGER.'],
+	/** Accroche, ligne par ligne ; le mot entre astérisques passe en or */
+	hook: ['Ta marque', 'mérite de', '*bouger*.'],
+	/** Petit titre au-dessus de chaque plan (un mot clé en or par plan) */
+	steps: {
+		prompt: 'Étape 1 · Le *brief*',
+		creation: 'Étape 2 · La *création*',
+		result: 'Étape 3 · Le *résultat*',
+		beforeAfter: 'La différence se *voit*',
+	},
 	prompt: 'Anime mon logo pour une pub de lancement',
-	/** Mots du prompt surlignés en jaune dans la bulle envoyée */
-	promptKeywords: ['logo', 'pub'],
 	assistantName: 'GMotion IA',
 	assistantGreeting: 'Salut ! Qu’est-ce qu’on anime aujourd’hui ?',
 	creationLabel: 'Création en cours',
@@ -391,23 +393,18 @@ export const gmotion = {
 
 // =============================================================================
 //  PUB « GMotionServices » — 1080x1920, 30 images/s, 15 s, sans voix off.
-//  Présente les 3 services. Couleurs : serviceColors dans theme.ts.
+//  Présente les 3 services. Couleurs : palette premium dans theme.ts.
 // =============================================================================
 export const gmotionServices = {
-	hook: {
-		words: ['Ton', 'business', 'mérite', 'MIEUX', 'qu’une', 'affiche.'],
-		/** Indices des mots sur chaque ligne */
-		lines: [[0, 1], [2], [3], [4, 5]],
-		/** Mot mis en valeur (jaune) */
-		emphasis: 3,
-	},
+	/** Accroche, ligne par ligne ; le mot entre astérisques passe en or */
+	hook: ['Ton business', 'mérite *mieux*', 'qu’une affiche.'],
 	/** Titre de chaque plan service */
 	titles: {
-		motion: {index: '01', title: 'Motion design', subtitle: 'Logos animés • Pubs animées'},
-		web: {index: '02', title: 'Sites web', subtitle: 'Vitrines rapides et responsives'},
-		code: {index: '03', title: 'Applications & code', subtitle: 'Tableaux de bord • Outils métier'},
+		motion: {index: '01', title: 'Motion design', subtitle: 'Des logos et des pubs qui *vivent*'},
+		web: {index: '02', title: 'Sites web', subtitle: 'Des vitrines *rapides*, sur tous les écrans'},
+		code: {index: '03', title: 'Applications & code', subtitle: 'Des outils *sur mesure* pour votre activité'},
 	},
-	recap: ['1 studio.', '3 expertises.'],
+	recap: ['1 studio.', '3 *expertises*.'],
 	/** Entreprise fictive de Douala dont le logo s'assemble */
 	motionClient: {
 		compositionId: 'GMotionServices',

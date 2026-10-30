@@ -80,10 +80,11 @@ export const theme = {
 export type Theme = typeof theme;
 
 // =============================================================================
-//  PUBS GMOTION (GMotionPromo, GMotionPromo2, GMotionServices) — deux palettes séparées
+//  PUBS GMOTION (GMotionPromo, GMotionPromo2, GMotionServices)
+//  Style sobre et haut de gamme : une palette unique, un seul accent or.
 // =============================================================================
 
-/** Couleurs du logo G : réservées au logo et au plan final. Ne jamais recolorer le logo. */
+/** Couleurs propres au logo G : le logo n'est jamais recoloré */
 export const brandLogo = {
 	night: '#050B1F',
 	electric: '#1F5BFF',
@@ -91,26 +92,38 @@ export const brandLogo = {
 	white: '#FFFFFF',
 };
 
-/** Palette vive utilisée pour tout le reste de la vidéo */
-export const videoPalette = {
-	bg: '#0A0A0F',
-	violet: '#7B2FF7',
-	magenta: '#FF2E93',
-	orange: '#FF7A1A',
-	yellow: '#FFD23F',
-	mint: '#2EE6A6',
-	white: '#FFFFFF',
-	muted: '#B9B3C9',
-	whatsapp: '#25D366',
+/** Palette unique des pubs GMotion */
+export const premium = {
+	/** Fond bleu nuit, avec un dégradé très léger */
+	bg: '#0B1A33',
+	bgEnd: '#10234A',
+	/** Texte et surfaces : blanc cassé */
+	text: '#F5F7FA',
+	textMuted: 'rgba(245, 247, 250, 0.64)',
+	textFaint: 'rgba(245, 247, 250, 0.38)',
+	surface: 'rgba(245, 247, 250, 0.04)',
+	surfaceStrong: 'rgba(245, 247, 250, 0.08)',
+	line: 'rgba(245, 247, 250, 0.12)',
+	/** Secondaire : bleu acier */
+	steel: '#2F6FD6',
+	steelSoft: 'rgba(47, 111, 214, 0.18)',
+	/** Accent or doux : un mot clé par plan, les fines lignes et le bouton WhatsApp. Jamais en grande surface. */
+	gold: '#C9A45C',
+	/** Ombre portée douce des cartes et appareils */
+	shadow: '0 40px 90px rgba(3, 8, 20, 0.55)',
 };
 
-/** Couleur dominante de chaque plan (le plan « résultat » prend la charte du client) */
-export const sceneColors = {
-	hook: {main: videoPalette.magenta, second: videoPalette.violet},
-	prompt: {main: videoPalette.violet, second: videoPalette.magenta},
-	creation: {main: videoPalette.orange, second: videoPalette.yellow},
-	beforeAfter: {main: videoPalette.mint, second: videoPalette.violet},
-	cta: {main: brandLogo.electric, second: brandLogo.cyan},
+/** Coloration syntaxique monochrome (nuances de blanc et de bleu acier) */
+export const premiumSyntax = {
+	keyword: '#8DB3F0',
+	string: '#BFD0E6',
+	number: '#D7DEE8',
+	comment: 'rgba(245, 247, 250, 0.36)',
+	function: '#F5F7FA',
+	tag: '#8DB3F0',
+	attr: '#BFD0E6',
+	punctuation: '#6F8DB8',
+	plain: 'rgba(245, 247, 250, 0.82)',
 };
 
 export type ClientPalette = {
@@ -121,39 +134,16 @@ export type ClientPalette = {
 	/** Fond foncé et fond clair de la charte */
 	dark: string;
 	light: string;
-	/** Couleur du texte posé sur le fond principal */
+	/** Couleur du texte posé sur le fond clair */
 	ink: string;
 };
 
-/** Chartes graphiques des clients fictifs : chaque marque a sa propre identité */
+/** Chartes des clients fictifs : leur propre identité, en tons doux */
 export const clientPalettes: Record<string, ClientPalette> = {
-	// NOVA, boisson énergétique : vert acide et menthe sur fond quasi noir
-	nova: {primary: '#B8F24A', secondary: '#2EE6A6', accent: '#FFD23F', dark: '#0D1A10', light: '#EFFFD6', ink: '#0D1A10'},
-	// Boulangerie Le Wouri : brun doré, crème et orange
-	leWouri: {primary: '#C8862E', secondary: '#FF8A2A', accent: '#7A4A1E', dark: '#3B2210', light: '#FFF1D6', ink: '#3B2210'},
+	// NOVA, boisson énergétique : vert sauge et eucalyptus
+	nova: {primary: '#8FB3A0', secondary: '#B9D0C2', accent: '#5E8473', dark: '#1B2A25', light: '#EEF3EF', ink: '#1B2A25'},
+	// Boulangerie Le Wouri : caramel, beige et crème
+	leWouri: {primary: '#B8946A', secondary: '#D9C3A0', accent: '#8A6A47', dark: '#2F251D', light: '#F6EFE4', ink: '#2F251D'},
+	// Akwa Grill (GMotionServices) : terre cuite douce et sable
+	akwaGrill: {primary: '#B9826A', secondary: '#DCC0AE', accent: '#8C5B47', dark: '#2B1E19', light: '#F5ECE6', ink: '#2B1E19'},
 };
-
-/** Pub GMotionServices : couleur dominante de chaque plan (un service = une couleur) */
-export const serviceColors = {
-	hook: {main: videoPalette.magenta, second: videoPalette.violet},
-	motion: {main: videoPalette.orange, second: videoPalette.yellow},
-	web: {main: videoPalette.violet, second: videoPalette.magenta},
-	code: {main: videoPalette.mint, second: '#12B886'},
-	recap: {main: videoPalette.magenta, second: videoPalette.orange},
-	cta: {main: brandLogo.electric, second: brandLogo.cyan},
-};
-
-/** Coloration syntaxique « menthe » du plan Programmation */
-export const mintSyntax = {
-	keyword: '#FF2E93',
-	string: '#FFD23F',
-	number: '#FF7A1A',
-	comment: '#5E8C7C',
-	function: '#2EE6A6',
-	tag: '#FF7A1A',
-	attr: '#FFD23F',
-	punctuation: '#9FF5D6',
-	plain: '#F2FFF9',
-};
-
-clientPalettes.akwaGrill = {primary: '#FF7A1A', secondary: '#FFD23F', accent: '#B23A0E', dark: '#2A1206', light: '#FFF4E0', ink: '#2A1206'};
