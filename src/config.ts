@@ -465,3 +465,31 @@ const grouper = <T,>(liste: T[], cle: (t: T) => string) =>
 		zones: ['Akwa', 'Bonapriso', 'Deido', 'Makepe'],
 	},
 };
+
+// =============================================================================
+//  PUB « IPhone15ProMaxAd » — concept publicitaire non officiel, 1080x1920,
+//  30 images/s, 20 s, sans voix off. Style : voir `nocturne` dans theme.ts.
+// =============================================================================
+export const iphoneAd = {
+	product: 'iPhone 15 Pro Max',
+	/** Titres des cartes flottantes du premier plan */
+	introCards: ['Titane', 'A17 Pro', '48 Mpx', 'Zoom 5x', 'USB-C'],
+	search: 'Jusqu’où peut aller un smartphone ?',
+	reveal: {title: 'iPhone 15 Pro Max', subtitle: 'Taillé dans le titane.'},
+	/** Pile de calques en escalier 3D (titre, détail) */
+	features: [
+		{title: 'Puce A17 Pro', detail: 'GPU 6 cœurs · ray tracing matériel'},
+		{title: 'Appareil photo 48 Mpx', detail: 'Capteur principal · mode Portrait'},
+		{title: 'Téléobjectif 5x', detail: 'Focale 120 mm · exclusif au Pro Max'},
+		{title: 'Bouton Action', detail: 'Un raccourci, à ta façon'},
+		{title: 'USB-C', detail: 'Jusqu’à 10 Gb/s en USB 3'},
+	],
+	featuresProgressLabel: 'Puissance',
+	zoom: {title: 'Zoom optique 5x', from: '24 mm', to: '120 mm', caption: 'Le détail, même de loin.'},
+	display: {title: '6,7 pouces.', subtitle: 'Super Retina XDR · ProMotion 120 Hz', finishesLabel: 'Quatre finitions titane'},
+	finishes: ['Titane naturel', 'Titane bleu', 'Titane blanc', 'Titane noir'],
+	end: {title: 'iPhone 15 Pro Max', button: 'Découvrir', tagline: 'Le titane, version Pro.'},
+	credit: 'Concept publicitaire non officiel · non affilié à Apple · réalisé par GMotion Studio',
+	music: 'music-iphone.mp3',
+	volumes: {music: 0.75, keyClick: 0.35, whoosh: 0.45, impact: 0.5, swoosh: 0.5, riser: 0.4},
+};

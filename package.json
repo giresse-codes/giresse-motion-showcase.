@@ -11,6 +11,8 @@
     "lint": "tsc --noEmit",
     "sfx": "node scripts/generate-audio.mjs",
     "sfx:gmotion": "node scripts/generate-gmotion-audio.mjs",
+    "sfx:iphone": "node scripts/generate-iphone-audio.mjs",
+    "render:iphone": "remotion render IPhone15ProMaxAd out/iphone-15-pro-max.mp4",
     "render:gmotion": "remotion render GMotionPromo out/gmotion-promo.mp4",
     "render:gmotion2": "remotion render GMotionPromo2 out/gmotion-promo-2.mp4",
     "render:services": "remotion render GMotionServices out/gmotion-services.mp4",

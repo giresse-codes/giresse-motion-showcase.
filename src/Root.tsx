@@ -5,6 +5,8 @@ import {DURATION, FPS} from './lib/timeline';
 import {PromoVideo} from './PromoVideo';
 import {GMotionPromo} from './gmotion/GMotionPromo';
 import {GMotionServices} from './gmotion/services/GMotionServices';
+import {IPhone15ProMaxAd} from './iphone/IPhone15ProMaxAd';
+import {DURATION as IPHONE_DURATION, FPS as IPHONE_FPS} from './iphone/timeline';
 import {DURATION as GMOTION_DURATION, FPS as GMOTION_FPS} from './gmotion/timeline';
 
 const FORMATS = [
@@ -48,6 +50,14 @@ export const RemotionRoot: React.FC = () => (
 			component={GMotionServices}
 			durationInFrames={GMOTION_DURATION}
 			fps={GMOTION_FPS}
+			width={1080}
+			height={1920}
+		/>
+		<Composition
+			id="IPhone15ProMaxAd"
+			component={IPhone15ProMaxAd}
+			durationInFrames={IPHONE_DURATION}
+			fps={IPHONE_FPS}
 			width={1080}
 			height={1920}
 		/>

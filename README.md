@@ -4,7 +4,7 @@ Vidéos publicitaires **« un seul prompt, et voilà le résultat »**, réalis�
 [Remotion](https://www.remotion.dev) en TypeScript, pour présenter mes services
 (motion design, développement web, programmation) aux entreprises.
 
-Ce dépôt contient aussi les pubs **GMotionPromo**, **GMotionPromo2** et **GMotionServices** (voir plus bas).
+Ce dépôt contient aussi les pubs **GMotionPromo**, **GMotionPromo2**, **GMotionServices** et le concept **IPhone15ProMaxAd** (voir plus bas).
 
 Trois vidéos de 20 secondes (30 images/s), chacune en **9:16 (1080×1920)** et en
 **16:9 (1920×1080)** :
@@ -206,6 +206,36 @@ Code : `src/gmotion/services/`.
 remplace-la par ta musique en gardant le même nom. Les plans changent à 2, 5, 8, 11 et
 13 s, sur les temps forts d'un morceau à 120 BPM. Effets sonores discrets : clics clavier,
 whoosh, impact léger, swoosh sur le logo (`public/sfx/`).
+
+## Pub IPhone15ProMaxAd (concept non officiel)
+
+Concept publicitaire **non officiel** pour l'iPhone 15 Pro Max, **1080×1920, 30 images/s,
+20 secondes, sans voix off**, dans un style nocturne : noir profond, un seul halo orange,
+interfaces en verre gris flottant en 3D, reflets sur sol brillant, traînées de lumière.
+
+```bash
+npx remotion render IPhone15ProMaxAd out/iphone-15-pro-max.mp4
+```
+
+(ou `npm run render:iphone`)
+
+| Temps        | Plan                 | Contenu                                                              |
+| ------------ | -------------------- | -------------------------------------------------------------------- |
+| 0 → 2,5 s    | Intro                | Le halo s'allume, des cartes en verre défilent sur un sol brillant    |
+| 2,5 → 5 s    | Recherche            | « Jusqu'où peut aller un smartphone ? » se tape dans une barre        |
+| 5 → 9 s      | Révélation           | Le téléphone sort de l'ombre, liseré de lumière sur le titane         |
+| 9 → 12,5 s   | Caractéristiques     | A17 Pro, 48 Mpx, téléobjectif 5x, bouton Action, USB-C en escalier 3D |
+| 12,5 → 15,5 s| Zoom 5x              | Un viseur zoome de 24 à 120 mm sur le pont, au coucher du soleil      |
+| 15,5 → 18 s  | Écran et finitions   | 6,7 pouces, ProMotion 120 Hz, puis les quatre finitions titane        |
+| 18 → 20 s    | Fin                  | Nom du produit, bouton pilule orange, signature ; image fixe 0,5 s    |
+
+- Le téléphone est entièrement dessiné en code (`src/iphone/Phone.tsx`) : aucune image ni
+  aucun logo de marque n'est utilisé. Le plan final porte la mention « Concept publicitaire
+  non officiel · non affilié à Apple ». iPhone est une marque d'Apple Inc.
+- Textes : `iphoneAd` dans `src/config.ts`. Couleurs : `nocturne` dans `src/theme.ts`.
+- Musique provisoire originale : `public/music-iphone.mp3` (120 BPM, générée par
+  `npm run sfx:iphone`), à remplacer par la tienne en gardant le même nom.
+- Code : `src/iphone/` (kit visuel, téléphone, scènes, timeline).
 
 ## Vérifier que tout compile
 

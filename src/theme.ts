@@ -147,3 +147,28 @@ export const clientPalettes: Record<string, ClientPalette> = {
 	// Akwa Grill (GMotionServices) : terre cuite douce et sable
 	akwaGrill: {primary: '#B9826A', secondary: '#DCC0AE', accent: '#8C5B47', dark: '#2B1E19', light: '#F5ECE6', ink: '#2B1E19'},
 };
+
+// =============================================================================
+//  PUB « IPhone15ProMaxAd » — style nocturne : noir profond, un seul halo orange,
+//  interfaces en verre gris, reflets au sol.
+// =============================================================================
+export const nocturne = {
+	bg: '#040404',
+	/** Halo orange (source de lumière unique) */
+	orb: '#FF6A2B',
+	orbCore: '#FFB27A',
+	orange: '#FF5A1F',
+	text: '#F4F4F5',
+	textMuted: 'rgba(244, 244, 245, 0.6)',
+	textFaint: 'rgba(244, 244, 245, 0.32)',
+	glass: 'linear-gradient(160deg, rgba(38,38,40,0.92), rgba(12,12,13,0.96))',
+	line: 'rgba(255, 255, 255, 0.12)',
+	lineStrong: 'rgba(255, 255, 255, 0.22)',
+	/** Finitions titane du téléphone dessiné */
+	titanium: {
+		natural: ['#8F8A80', '#C9C3B8', '#77736B'],
+		blue: ['#3E4656', '#6C7487', '#2F3542'],
+		white: ['#D9D7D2', '#F2F1EE', '#BDBAB3'],
+		black: ['#3A3A3C', '#5A5A5E', '#2A2A2C'],
+	},
+};
