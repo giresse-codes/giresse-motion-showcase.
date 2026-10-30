@@ -80,7 +80,7 @@ export const theme = {
 export type Theme = typeof theme;
 
 // =============================================================================
-//  PUBS GMOTION (GMotionPromo, GMotionPromo2) — deux palettes séparées
+//  PUBS GMOTION (GMotionPromo, GMotionPromo2, GMotionServices) — deux palettes séparées
 // =============================================================================
 
 /** Couleurs du logo G : réservées au logo et au plan final. Ne jamais recolorer le logo. */
@@ -132,3 +132,28 @@ export const clientPalettes: Record<string, ClientPalette> = {
 	// Boulangerie Le Wouri : brun doré, crème et orange
 	leWouri: {primary: '#C8862E', secondary: '#FF8A2A', accent: '#7A4A1E', dark: '#3B2210', light: '#FFF1D6', ink: '#3B2210'},
 };
+
+/** Pub GMotionServices : couleur dominante de chaque plan (un service = une couleur) */
+export const serviceColors = {
+	hook: {main: videoPalette.magenta, second: videoPalette.violet},
+	motion: {main: videoPalette.orange, second: videoPalette.yellow},
+	web: {main: videoPalette.violet, second: videoPalette.magenta},
+	code: {main: videoPalette.mint, second: '#12B886'},
+	recap: {main: videoPalette.magenta, second: videoPalette.orange},
+	cta: {main: brandLogo.electric, second: brandLogo.cyan},
+};
+
+/** Coloration syntaxique « menthe » du plan Programmation */
+export const mintSyntax = {
+	keyword: '#FF2E93',
+	string: '#FFD23F',
+	number: '#FF7A1A',
+	comment: '#5E8C7C',
+	function: '#2EE6A6',
+	tag: '#FF7A1A',
+	attr: '#FFD23F',
+	punctuation: '#9FF5D6',
+	plain: '#F2FFF9',
+};
+
+clientPalettes.akwaGrill = {primary: '#FF7A1A', secondary: '#FFD23F', accent: '#B23A0E', dark: '#2A1206', light: '#FFF4E0', ink: '#2A1206'};

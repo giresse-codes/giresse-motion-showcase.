@@ -1,5 +1,5 @@
 import React from 'react';
-import {interpolate, spring} from 'remotion';
+import {interpolate, random, spring} from 'remotion';
 import {ClientPalette} from '../theme';
 import {clamp, springs} from '../lib/anim';
 import {fonts} from './fonts';
@@ -7,6 +7,20 @@ import {useClient} from './client';
 
 export type PieceTransform = {x: number; y: number; rotate: number; scale: number; opacity: number};
 const IDENTITY: PieceTransform = {x: 0, y: 0, rotate: 0, scale: 1, opacity: 1};
+
+/** Une pièce part d'une position aléatoire et vient se verrouiller (ressort) */
+export const flyIn = (frame: number, fps: number, key: string, delay: number, spread: number): PieceTransform => {
+	const p = spring({frame: frame - delay, fps, config: {damping: 13, mass: 0.7, stiffness: 120}});
+	const angle = random(`ang-${key}`) * Math.PI * 2;
+	const dist = spread * (0.7 + random(`dist-${key}`) * 0.6);
+	return {
+		x: Math.cos(angle) * dist * (1 - p),
+		y: Math.sin(angle) * dist * (1 - p),
+		rotate: (random(`rot-${key}`) - 0.5) * 540 * (1 - p),
+		scale: 0.4 + 0.6 * p,
+		opacity: interpolate(frame - delay, [0, 4], [0, 1], clamp),
+	};
+};
 
 type Piece = {d: string; cx: number; cy: number};
 

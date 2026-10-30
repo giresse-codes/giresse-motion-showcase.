@@ -4,7 +4,7 @@ Vidéos publicitaires **« un seul prompt, et voilà le résultat »**, réalis�
 [Remotion](https://www.remotion.dev) en TypeScript, pour présenter mes services
 (motion design, développement web, programmation) aux entreprises.
 
-Ce dépôt contient aussi la pub **GMotionPromo** (voir plus bas).
+Ce dépôt contient aussi les pubs **GMotionPromo**, **GMotionPromo2** et **GMotionServices** (voir plus bas).
 
 Trois vidéos de 20 secondes (30 images/s), chacune en **9:16 (1080×1920)** et en
 **16:9 (1920×1080)** :
@@ -184,6 +184,32 @@ plus de 150 px du haut et du bas (zones de l'interface TikTok).
   `config.ts` : les pulsations de lumière se recalent dessus.
 - **Effets sonores** : clics clavier, whoosh, glitch, impact, swoosh (`public/sfx/`).
 - Code de la pub : `src/gmotion/` (une scène par fichier, timeline dans `timeline.ts`).
+
+## Pub GMotionServices (les 3 services de GMotion Studio)
+
+Publicité verticale **1080×1920, 30 images/s, 15 secondes exactement, sans voix off**,
+qui présente les trois services. Contact : +237 673 236 084 (wa.me/237673236084).
+
+```bash
+npx remotion render GMotionServices out/gmotion-services.mp4
+```
+
+(ou `npm run render:services`)
+
+| Temps      | Plan                 | Couleur dominante | Contenu                                                              |
+| ---------- | -------------------- | ----------------- | -------------------------------------------------------------------- |
+| 0 → 2 s    | Accroche             | magenta           | Flash, « Ton business mérite MIEUX qu’une affiche. » mot par mot      |
+| 2 → 5 s    | Motion design        | orange / jaune    | Logo d’Akwa Grill qui s’assemble, keyframes néon, particules          |
+| 5 → 8 s    | Sites web            | violet / magenta  | Glitch + whoosh, site construit bloc par bloc, puis sur téléphone     |
+| 8 → 11 s   | Applications & code  | vert menthe       | Code qui défile, transformé en tableau de bord animé                  |
+| 11 → 13 s  | Récap                | magenta / orange  | Les 3 résultats en grille qui pulsent sur le beat, « 1 studio. 3 expertises. » |
+| 13 → 15 s  | Final                | bleu du logo      | Logo G dessiné trait par trait, bouton WhatsApp, image fixe 0,5 s     |
+
+- Textes, entreprise fictive, site et code affichés : `gmotionServices` dans `src/config.ts`.
+- Couleurs de chaque plan : `serviceColors` dans `src/theme.ts` (le logo garde `brandLogo`).
+- Code de la pub : `src/gmotion/services/` (une scène par fichier, timeline dans `timeline.ts`).
+- Même musique (`public/music.mp3`, 120 BPM) et mêmes effets sonores que GMotionPromo :
+  le drop de la musique tombe sur le plan Programmation (8 s).
 
 ## Vérifier que tout compile
 

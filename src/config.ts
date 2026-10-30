@@ -388,3 +388,83 @@ export const gmotion = {
 		pop: 0.22,
 	},
 };
+
+// =============================================================================
+//  PUB « GMotionServices » — 1080x1920, 30 images/s, 15 s, sans voix off.
+//  Présente les 3 services. Couleurs : serviceColors dans theme.ts.
+// =============================================================================
+export const gmotionServices = {
+	hook: {
+		words: ['Ton', 'business', 'mérite', 'MIEUX', 'qu’une', 'affiche.'],
+		/** Indices des mots sur chaque ligne */
+		lines: [[0, 1], [2], [3], [4, 5]],
+		/** Mot mis en valeur (jaune) */
+		emphasis: 3,
+	},
+	/** Titre de chaque plan service */
+	titles: {
+		motion: {index: '01', title: 'Motion design', subtitle: 'Logos animés • Pubs animées'},
+		web: {index: '02', title: 'Sites web', subtitle: 'Vitrines rapides et responsives'},
+		code: {index: '03', title: 'Applications & code', subtitle: 'Tableaux de bord • Outils métier'},
+	},
+	recap: ['1 studio.', '3 expertises.'],
+	/** Entreprise fictive de Douala dont le logo s'assemble */
+	motionClient: {
+		compositionId: 'GMotionServices',
+		name: 'Akwa Grill',
+		sector: 'Restaurant · Akwa, Douala',
+		adTitle: 'Grillades au feu de bois',
+		adSubtitle: 'Akwa, Douala',
+		adCta: 'Réserver',
+		palette: 'akwaGrill',
+		mark: 'round',
+		product: 'can',
+		beforeTagline: '',
+	} as GMotionClient,
+	/** Site vitrine construit bloc par bloc */
+	site: {
+		name: 'Maison Ndolé',
+		url: 'maison-ndole.cm',
+		nav: ['Menu', 'Réserver', 'Contact'],
+		heroTitle: 'La cuisine de Douala, revisitée',
+		heroText: 'Ndolé, poulet DG et poisson braisé, à Bonapriso.',
+		heroCta: 'Réserver une table',
+		cards: ['Ndolé crevettes', 'Poulet DG', 'Poisson braisé'],
+		prices: ['6 500 FCFA', '8 000 FCFA', '7 500 FCFA'],
+	},
+	/** Code qui défile puis se transforme en tableau de bord */
+	code: {
+		fileName: 'livraisons.ts',
+		source: `import {live, chart, kpi} from './dashboard';
+
+type Livraison = {id: string; quartier: string; montant: number};
+
+// Wouri Logistique : suivi des livraisons en temps réel
+export async function tableauDeBord(flux: Livraison[]) {
+  const total = flux.reduce((s, l) => s + l.montant, 0);
+  const parQuartier = grouper(flux, (l) => l.quartier);
+
+  kpi('Chiffre du jour', total, 'FCFA');
+  kpi('Livraisons', flux.length);
+  chart('line', heureParHeure(flux), {animate: true});
+  chart('bar', parQuartier, {stagger: 0.08});
+
+  live('livraisons', (l) => flux.unshift(l));
+  return {total, quartiers: Object.keys(parQuartier)};
+}
+
+const grouper = <T,>(liste: T[], cle: (t: T) => string) =>
+  liste.reduce((acc, t) => ({...acc, [cle(t)]: [...(acc[cle(t)] ?? []), t]}), {});`,
+	},
+	dashboard: {
+		name: 'Wouri Logistique',
+		title: 'Livraisons du jour',
+		kpis: [
+			{label: 'Chiffre du jour', value: 2450000, unit: 'FCFA'},
+			{label: 'Livraisons', value: 386, unit: ''},
+			{label: 'Livreurs actifs', value: 42, unit: ''},
+			{label: 'À l’heure', value: 97, unit: '%'},
+		],
+		zones: ['Akwa', 'Bonapriso', 'Deido', 'Makepe'],
+	},
+};

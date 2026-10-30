@@ -7,22 +7,40 @@ import {fonts} from './fonts';
 import {GFlash} from './Atmosphere';
 import {G} from './timeline';
 
-// Répartition des mots sur trois lignes : « Ta marque / mérite de / BOUGER. »
-const LINES = [
-	[0, 1],
-	[2, 3],
-	[4],
-];
+type Props = {
+	words?: string[];
+	/** Indices des mots sur chaque ligne */
+	lines?: number[][];
+	/** Indice du mot mis en valeur (plus gros, en jaune) */
+	emphasis?: number;
+	/** Image d'apparition de chaque mot */
+	wordFrames?: readonly number[];
+	flashAt?: number;
+	exitAt?: number;
+	fontSize?: number;
+};
 
-// 0 → 2 s : écran noir, flash cyan, puis typographie cinétique avec tremblement de caméra.
-export const HookScene: React.FC = () => {
+// 0 → 2 s : écran noir, flash magenta, puis typographie cinétique avec tremblement de caméra.
+// Par défaut : « Ta marque / mérite de / BOUGER. » (GMotionPromo).
+export const HookScene: React.FC<Props> = ({
+	words = gmotion.hook,
+	lines = [
+		[0, 1],
+		[2, 3],
+		[4],
+	],
+	emphasis = words.length - 1,
+	wordFrames = G.hook.words,
+	flashAt = G.hook.flashAt,
+	exitAt = G.hook.exitAt,
+	fontSize = 118,
+}) => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
-	const h = G.hook;
-	const words = gmotion.hook;
-	const last = words.length - 1;
+	const h = {words: wordFrames, flashAt, exitAt};
+	const last = emphasis;
 
-	// Tremblement : une secousse qui retombe à chaque mot (plus forte sur le dernier)
+	// Tremblement : une secousse qui retombe à chaque mot (plus forte sur le mot mis en valeur)
 	let shake = 0;
 	h.words.forEach((at, i) => {
 		const since = frame - at;
@@ -50,7 +68,7 @@ export const HookScene: React.FC = () => {
 					filter: exit > 0.01 ? `blur(${exit * 24}px)` : undefined,
 				}}
 			>
-				{LINES.map((line, li) => (
+				{lines.map((line, li) => (
 					<div key={li} style={{display: 'flex', gap: 30, alignItems: 'baseline'}}>
 						{line.map((wi) => {
 							const at = h.words[wi];
@@ -64,7 +82,7 @@ export const HookScene: React.FC = () => {
 										display: 'inline-block',
 										fontFamily: fonts.display,
 										fontWeight: 900,
-										fontSize: big ? 172 : 118,
+										fontSize: big ? fontSize * 1.46 : fontSize,
 										lineHeight: 1.05,
 										letterSpacing: big ? -4 : -2,
 										transform: `translateY(${(1 - s) * 90}px) scale(${s}) rotate(${(1 - s) * (wi % 2 ? 10 : -10)}deg)`,

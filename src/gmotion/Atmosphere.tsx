@@ -4,44 +4,50 @@ import {gmotion} from '../config';
 import {brandLogo, sceneColors, videoPalette} from '../theme';
 import {clamp} from '../lib/anim';
 import {useClient} from './client';
-import {beatPulse, G} from './timeline';
+import {beatPulse, DURATION, G} from './timeline';
 
 const FADE = 8; // demi-durée des fondus de couleur entre deux plans
 
+/** Un plan du fond : jusqu'à quelle image il dure, et ses deux couleurs dominantes */
+export type ColorStop = {until: number; main: string; second: string};
+
 /** Couleurs dominantes (principale, secondaire, fond) à une image donnée, avec fondus aux changements de plan */
-const useSceneColors = (frame: number) => {
-	const {palette} = useClient();
-	const stops = [
-		{at: G.prompt.from, ...sceneColors.hook},
-		{at: G.creation.from, ...sceneColors.prompt},
-		{at: G.result.from, ...sceneColors.creation},
-		{at: G.beforeAfter.from, main: palette.primary, second: palette.secondary},
-		{at: G.cta.from, ...sceneColors.beforeAfter},
-		{at: Infinity, ...sceneColors.cta},
-	];
+const sceneColorsAt = (frame: number, stops: ColorStop[], brandFrom: number) => {
 	const input: number[] = [];
 	const mains: string[] = [];
 	const seconds: string[] = [];
 	let start = 0;
 	stops.forEach((s, i) => {
-		const end = s.at === Infinity ? G.cta.from + G.cta.duration : s.at;
-		input.push(i === 0 ? start : start + FADE, end - FADE);
+		input.push(i === 0 ? start : start + FADE, s.until - FADE);
 		mains.push(s.main, s.main);
 		seconds.push(s.second, s.second);
-		start = end;
+		start = s.until;
 	});
 	return {
 		main: interpolateColors(frame, input, mains),
 		second: interpolateColors(frame, input, seconds),
 		// Le fond passe du noir profond au bleu nuit du logo pour le plan final
-		base: interpolateColors(frame, [G.cta.from - FADE, G.cta.from + FADE], [videoPalette.bg, brandLogo.night]),
+		base: interpolateColors(frame, [brandFrom - FADE, brandFrom + FADE], [videoPalette.bg, brandLogo.night]),
 	};
 };
 
+/** Plans de GMotionPromo : le plan « résultat » prend la charte du client */
+export const usePromoColorStops = (): ColorStop[] => {
+	const {palette} = useClient();
+	return [
+		{until: G.prompt.from, ...sceneColors.hook},
+		{until: G.creation.from, ...sceneColors.prompt},
+		{until: G.result.from, ...sceneColors.creation},
+		{until: G.beforeAfter.from, main: palette.primary, second: palette.secondary},
+		{until: G.cta.from, ...sceneColors.beforeAfter},
+		{until: DURATION, ...sceneColors.cta},
+	];
+};
+
 // Fond animé : dégradés de la couleur dominante du plan, lueur qui pulse sur le beat.
-export const GBackground: React.FC = () => {
+export const GBackground: React.FC<{stops: ColorStop[]; brandFrom: number}> = ({stops, brandFrom}) => {
 	const frame = useCurrentFrame();
-	const {main, second, base} = useSceneColors(frame);
+	const {main, second, base} = sceneColorsAt(frame, stops, brandFrom);
 	const t = frame / 30;
 	const pulse = beatPulse(frame);
 	const blobs = [

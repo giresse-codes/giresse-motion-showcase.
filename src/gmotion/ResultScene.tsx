@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, interpolate, random, spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {CameraMotionBlur} from '@remotion/motion-blur';
 import {gmotion} from '../config';
 import {videoPalette} from '../theme';
@@ -8,24 +8,10 @@ import {DeviceMockup, VIEWPORTS} from '../components/DeviceMockup';
 import {fonts} from './fonts';
 import {GFlash, GPill} from './Atmosphere';
 import {G} from './timeline';
-import {ClientAd, ClientMark, ClientWordmark, PieceTransform} from './ClientBrand';
+import {ClientAd, ClientMark, ClientWordmark, flyIn} from './ClientBrand';
 import {useClient} from './client';
 
 const MARK = 440;
-
-/** Une pièce part d'une position aléatoire et vient se verrouiller (ressort) */
-const flyIn = (frame: number, fps: number, key: string, delay: number, spread: number): PieceTransform => {
-	const p = spring({frame: frame - delay, fps, config: {damping: 13, mass: 0.7, stiffness: 120}});
-	const angle = random(`ang-${key}`) * Math.PI * 2;
-	const dist = spread * (0.7 + random(`dist-${key}`) * 0.6);
-	return {
-		x: Math.cos(angle) * dist * (1 - p),
-		y: Math.sin(angle) * dist * (1 - p),
-		rotate: (random(`rot-${key}`) - 0.5) * 540 * (1 - p),
-		scale: 0.4 + 0.6 * p,
-		opacity: interpolate(frame - delay, [0, 4], [0, 1], clamp),
-	};
-};
 
 const LogoAssembly: React.FC = () => {
 	const frame = useCurrentFrame();

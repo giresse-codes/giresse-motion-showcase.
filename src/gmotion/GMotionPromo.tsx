@@ -3,7 +3,7 @@ import {AbsoluteFill, Freeze, Html5Audio, Sequence, staticFile} from 'remotion';
 import {gmotion} from '../config';
 import {videoPalette} from '../theme';
 import {keyClickFrames, makeTypingTimes} from '../lib/typing';
-import {GBackground, Grain} from './Atmosphere';
+import {GBackground, Grain, usePromoColorStops} from './Atmosphere';
 import {HookScene} from './HookScene';
 import {PromptScene} from './PromptScene';
 import {CreationScene} from './CreationScene';
@@ -58,6 +58,8 @@ const GMotionSound: React.FC = () => {
 	);
 };
 
+const PromoBackground: React.FC = () => <GBackground stops={usePromoColorStops()} brandFrom={G.cta.from} />;
+
 export type GMotionPromoProps = {compositionId: string};
 
 // Pub verticale GMotion Studio — 1080x1920, 30 images/s, 15 s, sans voix off.
@@ -67,7 +69,7 @@ export const GMotionPromo: React.FC<GMotionPromoProps> = ({compositionId}) => (
 		<AbsoluteFill style={{backgroundColor: videoPalette.bg}}>
 			{/* Toute l'image se fige pendant les 0,5 dernière seconde */}
 			<Freeze frame={FREEZE_AT} active={(f) => f >= FREEZE_AT}>
-				<GBackground />
+				<PromoBackground />
 				<Sequence from={G.hook.from} durationInFrames={G.hook.duration} name="Accroche">
 					<HookScene />
 				</Sequence>

@@ -4,6 +4,7 @@ import {gmotionClients, videos} from './config';
 import {DURATION, FPS} from './lib/timeline';
 import {PromoVideo} from './PromoVideo';
 import {GMotionPromo} from './gmotion/GMotionPromo';
+import {GMotionServices} from './gmotion/services/GMotionServices';
 import {DURATION as GMOTION_DURATION, FPS as GMOTION_FPS} from './gmotion/timeline';
 
 const FORMATS = [
@@ -42,5 +43,13 @@ export const RemotionRoot: React.FC = () => (
 				defaultProps={{compositionId: client.compositionId}}
 			/>
 		))}
+		<Composition
+			id="GMotionServices"
+			component={GMotionServices}
+			durationInFrames={GMOTION_DURATION}
+			fps={GMOTION_FPS}
+			width={1080}
+			height={1920}
+		/>
 	</>
 );

@@ -28,8 +28,16 @@ const RULES: {re: RegExp; color: (m: string, rest: string) => string}[] = [
 	{re: /^./, color: () => theme.syntax.plain},
 ];
 
+/** Les règles renvoient les couleurs du thème par défaut : on les traduit dans la palette demandée */
+const remap = (color: string, palette: SyntaxPalette) => {
+	const key = (Object.keys(theme.syntax) as (keyof SyntaxPalette)[]).find((k) => theme.syntax[k] === color);
+	return key ? palette[key] : color;
+};
+
 // Coloration syntaxique minimaliste (TS / TSX) pour l'éditeur animé.
-export const tokenizeLine = (line: string): Token[] => {
+export type SyntaxPalette = typeof theme.syntax;
+
+export const tokenizeLine = (line: string, palette: SyntaxPalette = theme.syntax): Token[] => {
 	const tokens: Token[] = [];
 	let rest = line;
 	while (rest.length > 0) {
@@ -37,7 +45,7 @@ export const tokenizeLine = (line: string): Token[] => {
 			const m = rest.match(rule.re);
 			if (m) {
 				const after = rest.slice(m[0].length);
-				tokens.push({text: m[0], color: rule.color(m[0], after)});
+				tokens.push({text: m[0], color: remap(rule.color(m[0], after), palette)});
 				rest = after;
 				break;
 			}

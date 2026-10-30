@@ -11,8 +11,11 @@ export const getClient = (compositionId: string): ClientInfo => {
 	return {client, palette: clientPalettes[client.palette] ?? clientPalettes.nova};
 };
 
-export const ClientProvider: React.FC<{compositionId: string; children: React.ReactNode}> = ({compositionId, children}) => (
-	<ClientContext.Provider value={getClient(compositionId)}>{children}</ClientContext.Provider>
+/** Fournit le client fictif : par identifiant de composition, ou directement (client + clé de charte) */
+export const ClientProvider: React.FC<{compositionId?: string; client?: GMotionClient; children: React.ReactNode}> = ({compositionId, client, children}) => (
+	<ClientContext.Provider value={client ? {client, palette: clientPalettes[client.palette] ?? clientPalettes.nova} : getClient(compositionId ?? '')}>
+		{children}
+	</ClientContext.Provider>
 );
 
 /** Client fictif (textes + charte graphique) de la pub en cours */
