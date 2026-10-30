@@ -1,6 +1,6 @@
 import React from 'react';
 import {Composition, Folder} from 'remotion';
-import {videos} from './config';
+import {gmotionClients, videos} from './config';
 import {DURATION, FPS} from './lib/timeline';
 import {PromoVideo} from './PromoVideo';
 import {GMotionPromo} from './gmotion/GMotionPromo';
@@ -30,13 +30,17 @@ export const RemotionRoot: React.FC = () => (
 				))}
 			</Folder>
 		))}
-		<Composition
-			id="GMotionPromo"
-			component={GMotionPromo}
-			durationInFrames={GMOTION_DURATION}
-			fps={GMOTION_FPS}
-			width={1080}
-			height={1920}
-		/>
+		{gmotionClients.map((client) => (
+			<Composition
+				key={client.compositionId}
+				id={client.compositionId}
+				component={GMotionPromo}
+				durationInFrames={GMOTION_DURATION}
+				fps={GMOTION_FPS}
+				width={1080}
+				height={1920}
+				defaultProps={{compositionId: client.compositionId}}
+			/>
+		))}
 	</>
 );

@@ -1,11 +1,13 @@
 import React from 'react';
 import {AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {gmotion} from '../config';
+import {brandLogo, videoPalette} from '../theme';
 import {clamp, springs} from '../lib/anim';
 import {fonts} from './fonts';
 import {FREEZE_AT, G} from './timeline';
 
-const {colors} = gmotion;
+// Plan final : palette du logo (brandLogo), le bouton garde le vert WhatsApp
+const colors = {...brandLogo, whatsapp: videoPalette.whatsapp};
 const LOGO = 400;
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 

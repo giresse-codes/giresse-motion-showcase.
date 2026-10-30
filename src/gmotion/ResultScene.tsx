@@ -2,14 +2,15 @@ import React from 'react';
 import {AbsoluteFill, interpolate, random, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {CameraMotionBlur} from '@remotion/motion-blur';
 import {gmotion} from '../config';
+import {videoPalette} from '../theme';
 import {clamp, springs} from '../lib/anim';
 import {DeviceMockup, VIEWPORTS} from '../components/DeviceMockup';
 import {fonts} from './fonts';
 import {GFlash, GPill} from './Atmosphere';
 import {G} from './timeline';
-import {NovaAd, NovaMark, NovaWordmark, PieceTransform} from './Nova';
+import {ClientAd, ClientMark, ClientWordmark, PieceTransform} from './ClientBrand';
+import {useClient} from './client';
 
-const {colors, client} = gmotion;
 const MARK = 440;
 
 /** Une pièce part d'une position aléatoire et vient se verrouiller (ressort) */
@@ -30,6 +31,7 @@ const LogoAssembly: React.FC = () => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const r = G.result;
+	const {client, palette} = useClient();
 	const lock = spring({frame: frame - r.lockAt, fps, config: springs.snappy});
 	const lockPulse = interpolate(frame - r.lockAt, [0, 4, 16], [0, 1, 0], clamp);
 	return (
@@ -46,16 +48,16 @@ const LogoAssembly: React.FC = () => {
 						marginLeft: -MARK / 2,
 						marginTop: -MARK / 2,
 						borderRadius: '50%',
-						border: `6px solid ${colors.cyan}`,
+						border: `6px solid ${palette.primary}`,
 						transform: `scale(${0.8 + lock * 0.9})`,
 						opacity: lockPulse,
-						boxShadow: `0 0 60px ${colors.cyan}`,
+						boxShadow: `0 0 60px ${palette.secondary}`,
 					}}
 				/>
-				<NovaMark size={MARK} glow={1 + lockPulse * 2} piece={(i) => flyIn(frame, fps, `p${i}`, r.assembleAt + i * 2, 220)} />
+				<ClientMark size={MARK} glow={1 + lockPulse * 2} piece={(i) => flyIn(frame, fps, `p${i}`, r.assembleAt + i * 2, 220)} />
 			</div>
-			<NovaWordmark size={150} piece={(i) => flyIn(frame, fps, `w${i}`, r.assembleAt + 8 + i * 2, 900)} />
-			<div style={{fontFamily: fonts.body, fontWeight: 600, fontSize: 40, color: colors.muted, opacity: interpolate(frame, [r.lockAt, r.lockAt + 8], [0, 1], clamp), letterSpacing: 4, textTransform: 'uppercase'}}>
+			<ClientWordmark maxSize={150} maxWidth={940} piece={(i) => flyIn(frame, fps, `w${i}`, r.assembleAt + 8 + i * 2, 900)} />
+			<div style={{fontFamily: fonts.body, fontWeight: 600, fontSize: 40, color: palette.light, opacity: interpolate(frame, [r.lockAt, r.lockAt + 8], [0, 1], clamp), letterSpacing: 4, textTransform: 'uppercase'}}>
 				{client.sector}
 			</div>
 		</div>
@@ -67,6 +69,7 @@ export const ResultScene: React.FC = () => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const r = G.result;
+	const {palette} = useClient();
 	const toPhone = spring({frame: frame - r.toPhoneAt, fps, config: springs.camera});
 	const phoneIn = spring({frame: frame - (r.toPhoneAt - 2), fps, config: {damping: 15, mass: 0.9, stiffness: 80}});
 	const exit = spring({frame: frame - (r.duration - 10), fps, config: springs.snappy});
@@ -108,7 +111,7 @@ export const ResultScene: React.FC = () => {
 							width: 700,
 							height: 120,
 							borderRadius: '50%',
-							background: `radial-gradient(ellipse, ${colors.cyan}AA, transparent 70%)`,
+							background: `radial-gradient(ellipse, ${palette.primary}AA, transparent 70%)`,
 							filter: 'blur(20px)',
 							opacity: phoneIn,
 						}}
@@ -120,8 +123,8 @@ export const ResultScene: React.FC = () => {
 							transformStyle: 'preserve-3d',
 						}}
 					>
-						<DeviceMockup type="phone" width={590} glowColor={colors.electric}>
-							<NovaAd frame={frame - r.toPhoneAt - 4} {...VIEWPORTS.phone} />
+						<DeviceMockup type="phone" width={590} glowColor={palette.primary}>
+							<ClientAd frame={frame - r.toPhoneAt - 4} {...VIEWPORTS.phone} />
 						</DeviceMockup>
 						{/* Reflet mobile qui suit la rotation */}
 						<div
@@ -136,10 +139,10 @@ export const ResultScene: React.FC = () => {
 					</div>
 				</AbsoluteFill>
 			)}
-			<GPill enter={pill} font={fonts.display}>
+			<GPill enter={pill} font={fonts.display} accent={palette.primary}>
 				✨ {gmotion.resultLabel}
 			</GPill>
-			<GFlash at={r.flashAt} duration={12} color={colors.white} />
+			<GFlash at={r.flashAt} duration={12} color={videoPalette.white} />
 		</AbsoluteFill>
 	);
 };

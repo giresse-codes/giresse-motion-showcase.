@@ -305,39 +305,72 @@ export const mix = {
 
 // =============================================================================
 //  PUB « GMotionPromo » — 1080x1920, 30 images/s, 15 secondes, sans voix off.
-//  Textes, contact et couleurs modifiables ici.
+//  Textes et contact modifiables ici (les couleurs sont dans theme.ts :
+//  brandLogo, videoPalette, sceneColors et clientPalettes).
 // =============================================================================
+export type GMotionClient = {
+	/** Identifiant de la composition (GMotionPromo, GMotionPromo2…) */
+	compositionId: string;
+	name: string;
+	sector: string;
+	adTitle: string;
+	adSubtitle: string;
+	adCta: string;
+	/** Clé de la charte graphique dans clientPalettes (theme.ts) */
+	palette: string;
+	/** Forme du logo en pièces et produit montré dans la pub */
+	mark: 'hexagon' | 'round';
+	product: 'can' | 'bread';
+	/** Texte de l'affiche « AVANT » */
+	beforeTagline: string;
+};
+
+/** Une composition par client fictif : même déroulé, charte différente */
+export const gmotionClients: GMotionClient[] = [
+	{
+		compositionId: 'GMotionPromo',
+		name: 'NOVA',
+		sector: 'Boissons énergétiques',
+		adTitle: 'Nouvelle saveur',
+		adSubtitle: 'Disponible dès maintenant',
+		adCta: 'Goûte l’énergie',
+		palette: 'nova',
+		mark: 'hexagon',
+		product: 'can',
+		beforeTagline: 'Boisson énergétique en vente ici',
+	},
+	{
+		compositionId: 'GMotionPromo2',
+		name: 'Le Wouri',
+		sector: 'Boulangerie artisanale',
+		adTitle: 'Pain chaud dès 6 h',
+		adSubtitle: 'Bonapriso, Douala',
+		adCta: 'Commander',
+		palette: 'leWouri',
+		mark: 'round',
+		product: 'bread',
+		beforeTagline: 'Pain - gâteaux - viennoiseries',
+	},
+];
+
 export const gmotion = {
 	brandName: 'GMotion Studio',
 	logo: 'logo-G.svg',
-	colors: {
-		night: '#050B1F',
-		electric: '#1F5BFF',
-		cyan: '#5BC8FF',
-		white: '#FFFFFF',
-		muted: '#8FA3C8',
-		whatsapp: '#25D366',
-	},
 	whatsapp: '+237 673 236 084',
 	/** Musique (à remplacer) et tempo : les plans et les accents sont calés sur ce BPM */
 	music: 'music.mp3',
 	bpm: 120,
 	/** Décalage (en secondes) du premier temps fort dans ta musique */
 	beatOffset: 0,
+	/** Accroche ; le mot mis en valeur (jaune) est le dernier */
 	hook: ['Ta', 'marque', 'mérite', 'de', 'BOUGER.'],
 	prompt: 'Anime mon logo pour une pub de lancement',
+	/** Mots du prompt surlignés en jaune dans la bulle envoyée */
+	promptKeywords: ['logo', 'pub'],
 	assistantName: 'GMotion IA',
 	assistantGreeting: 'Salut ! Qu’est-ce qu’on anime aujourd’hui ?',
 	creationLabel: 'Création en cours',
 	timelineTracks: ['Logo', 'Échelle', 'Rotation', 'Opacité', 'Lueur'],
-	/** Entreprise fictive dont le logo est animé */
-	client: {
-		name: 'NOVA',
-		sector: 'Boissons énergétiques',
-		adTitle: 'Nouvelle saveur',
-		adSubtitle: 'Disponible dès maintenant',
-		adCta: 'Goûte l’énergie',
-	},
 	resultLabel: 'Pub de lancement prête',
 	before: 'AVANT',
 	after: 'APRÈS',

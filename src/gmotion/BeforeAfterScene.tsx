@@ -1,12 +1,12 @@
 import React from 'react';
 import {AbsoluteFill, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {gmotion} from '../config';
+import {videoPalette as colors} from '../theme';
 import {springs} from '../lib/anim';
 import {BeforeAfter} from '../components/BeforeAfter';
 import {G} from './timeline';
-import {NovaAd, NovaPosterBefore} from './Nova';
+import {ClientAd, ClientPosterBefore} from './ClientBrand';
 
-const {colors} = gmotion;
 const W = 940;
 const H = 1380;
 // Taille virtuelle de l'affiche, mise à l'échelle dans le panneau
@@ -38,9 +38,9 @@ export const BeforeAfterScene: React.FC = () => {
 				wipeDuration={b.wipeDuration}
 				beforeLabel={gmotion.before}
 				afterLabel={gmotion.after}
-				accents={[colors.cyan, colors.electric, colors.cyan]}
-				before={wrap(<NovaPosterBefore width={VW} height={VH} />)}
-				after={wrap(<NovaAd frame={frame + 60} width={VW} height={VH} />)}
+				accents={[colors.mint, colors.mint, colors.violet]}
+				before={wrap(<ClientPosterBefore width={VW} height={VH} />)}
+				after={wrap(<ClientAd frame={frame + 60} width={VW} height={VH} />)}
 			/>
 		</AbsoluteFill>
 	);

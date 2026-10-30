@@ -1,12 +1,12 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, random, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {gmotion} from '../config';
+import {videoPalette as colors} from '../theme';
 import {clamp, springs} from '../lib/anim';
 import {fonts} from './fonts';
 import {GFlash} from './Atmosphere';
 import {G} from './timeline';
 
-const {colors} = gmotion;
 // Répartition des mots sur trois lignes : « Ta marque / mérite de / BOUGER. »
 const LINES = [
 	[0, 1],
@@ -71,11 +71,11 @@ export const HookScene: React.FC = () => {
 										opacity: Math.min(1, s * 1.6),
 										...(big
 											? {
-													background: `linear-gradient(180deg, ${colors.white} 10%, ${colors.cyan} 55%, ${colors.electric} 95%)`,
+													background: `linear-gradient(180deg, #FFF6C9 5%, ${colors.yellow} 45%, ${colors.orange} 100%)`,
 													WebkitBackgroundClip: 'text',
 													backgroundClip: 'text',
 													color: 'transparent',
-													filter: `blur(${blur}px) drop-shadow(0 0 30px ${colors.electric})`,
+													filter: `blur(${blur}px) drop-shadow(0 0 30px ${colors.magenta}) drop-shadow(0 0 8px ${colors.magenta})`,
 													padding: '0 10px',
 												}
 											: {color: colors.white, filter: `blur(${blur}px)`, textShadow: '0 8px 30px rgba(0,0,0,0.6)'}),
@@ -88,7 +88,7 @@ export const HookScene: React.FC = () => {
 					</div>
 				))}
 			</AbsoluteFill>
-			<GFlash at={h.flashAt} duration={14} />
+			<GFlash at={h.flashAt} duration={14} color={colors.magenta} />
 		</AbsoluteFill>
 	);
 };

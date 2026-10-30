@@ -1,6 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, Freeze, Html5Audio, Sequence, staticFile} from 'remotion';
 import {gmotion} from '../config';
+import {videoPalette} from '../theme';
 import {keyClickFrames, makeTypingTimes} from '../lib/typing';
 import {GBackground, Grain} from './Atmosphere';
 import {HookScene} from './HookScene';
@@ -10,6 +11,7 @@ import {ResultScene} from './ResultScene';
 import {BeforeAfterScene} from './BeforeAfterScene';
 import {CtaScene} from './CtaScene';
 import {FREEZE_AT, G} from './timeline';
+import {ClientProvider} from './client';
 
 const vol = gmotion.volumes;
 
@@ -56,32 +58,37 @@ const GMotionSound: React.FC = () => {
 	);
 };
 
+export type GMotionPromoProps = {compositionId: string};
+
 // Pub verticale GMotion Studio — 1080x1920, 30 images/s, 15 s, sans voix off.
-export const GMotionPromo: React.FC = () => (
-	<AbsoluteFill style={{backgroundColor: gmotion.colors.night}}>
-		{/* Toute l'image se fige pendant les 0,5 dernière seconde */}
-		<Freeze frame={FREEZE_AT} active={(f) => f >= FREEZE_AT}>
-			<GBackground />
-			<Sequence from={G.hook.from} durationInFrames={G.hook.duration} name="Accroche">
-				<HookScene />
-			</Sequence>
-			<Sequence from={G.prompt.from} durationInFrames={G.prompt.duration} name="Prompt">
-				<PromptScene />
-			</Sequence>
-			<Sequence from={G.result.from} durationInFrames={G.result.duration} name="Résultat">
-				<ResultScene />
-			</Sequence>
-			<Sequence from={G.creation.from} durationInFrames={G.creation.duration} name="Création">
-				<CreationScene />
-			</Sequence>
-			<Sequence from={G.beforeAfter.from} durationInFrames={G.beforeAfter.duration} name="Avant / après">
-				<BeforeAfterScene />
-			</Sequence>
-			<Sequence from={G.cta.from} durationInFrames={G.cta.duration} name="Appel à l'action">
-				<CtaScene />
-			</Sequence>
-			<Grain />
-		</Freeze>
-		<GMotionSound />
-	</AbsoluteFill>
+// Une composition par client fictif (voir gmotionClients dans config.ts).
+export const GMotionPromo: React.FC<GMotionPromoProps> = ({compositionId}) => (
+	<ClientProvider compositionId={compositionId}>
+		<AbsoluteFill style={{backgroundColor: videoPalette.bg}}>
+			{/* Toute l'image se fige pendant les 0,5 dernière seconde */}
+			<Freeze frame={FREEZE_AT} active={(f) => f >= FREEZE_AT}>
+				<GBackground />
+				<Sequence from={G.hook.from} durationInFrames={G.hook.duration} name="Accroche">
+					<HookScene />
+				</Sequence>
+				<Sequence from={G.prompt.from} durationInFrames={G.prompt.duration} name="Prompt">
+					<PromptScene />
+				</Sequence>
+				<Sequence from={G.result.from} durationInFrames={G.result.duration} name="Résultat">
+					<ResultScene />
+				</Sequence>
+				<Sequence from={G.creation.from} durationInFrames={G.creation.duration} name="Création">
+					<CreationScene />
+				</Sequence>
+				<Sequence from={G.beforeAfter.from} durationInFrames={G.beforeAfter.duration} name="Avant / après">
+					<BeforeAfterScene />
+				</Sequence>
+				<Sequence from={G.cta.from} durationInFrames={G.cta.duration} name="Appel à l'action">
+					<CtaScene />
+				</Sequence>
+				<Grain />
+			</Freeze>
+			<GMotionSound />
+		</AbsoluteFill>
+	</ClientProvider>
 );

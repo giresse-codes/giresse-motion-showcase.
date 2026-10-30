@@ -78,3 +78,57 @@ export const theme = {
 };
 
 export type Theme = typeof theme;
+
+// =============================================================================
+//  PUBS GMOTION (GMotionPromo, GMotionPromo2) — deux palettes séparées
+// =============================================================================
+
+/** Couleurs du logo G : réservées au logo et au plan final. Ne jamais recolorer le logo. */
+export const brandLogo = {
+	night: '#050B1F',
+	electric: '#1F5BFF',
+	cyan: '#5BC8FF',
+	white: '#FFFFFF',
+};
+
+/** Palette vive utilisée pour tout le reste de la vidéo */
+export const videoPalette = {
+	bg: '#0A0A0F',
+	violet: '#7B2FF7',
+	magenta: '#FF2E93',
+	orange: '#FF7A1A',
+	yellow: '#FFD23F',
+	mint: '#2EE6A6',
+	white: '#FFFFFF',
+	muted: '#B9B3C9',
+	whatsapp: '#25D366',
+};
+
+/** Couleur dominante de chaque plan (le plan « résultat » prend la charte du client) */
+export const sceneColors = {
+	hook: {main: videoPalette.magenta, second: videoPalette.violet},
+	prompt: {main: videoPalette.violet, second: videoPalette.magenta},
+	creation: {main: videoPalette.orange, second: videoPalette.yellow},
+	beforeAfter: {main: videoPalette.mint, second: videoPalette.violet},
+	cta: {main: brandLogo.electric, second: brandLogo.cyan},
+};
+
+export type ClientPalette = {
+	/** Couleur principale, couleur secondaire, accent */
+	primary: string;
+	secondary: string;
+	accent: string;
+	/** Fond foncé et fond clair de la charte */
+	dark: string;
+	light: string;
+	/** Couleur du texte posé sur le fond principal */
+	ink: string;
+};
+
+/** Chartes graphiques des clients fictifs : chaque marque a sa propre identité */
+export const clientPalettes: Record<string, ClientPalette> = {
+	// NOVA, boisson énergétique : vert acide et menthe sur fond quasi noir
+	nova: {primary: '#B8F24A', secondary: '#2EE6A6', accent: '#FFD23F', dark: '#0D1A10', light: '#EFFFD6', ink: '#0D1A10'},
+	// Boulangerie Le Wouri : brun doré, crème et orange
+	leWouri: {primary: '#C8862E', secondary: '#FF8A2A', accent: '#7A4A1E', dark: '#3B2210', light: '#FFF1D6', ink: '#3B2210'},
+};

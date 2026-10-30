@@ -1,13 +1,13 @@
 import React from 'react';
-import {AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {gmotion} from '../config';
+import {videoPalette as colors} from '../theme';
 import {clamp, springs} from '../lib/anim';
 import {makeTypingTimes, typedCount} from '../lib/typing';
 import {GlitchTransition} from '../components/GlitchTransition';
 import {fonts} from './fonts';
 import {G} from './timeline';
 
-const {colors} = gmotion;
 
 // 2 → 5 s : interface de chat en glassmorphism, frappe lettre par lettre et zoom avant progressif.
 export const PromptScene: React.FC = () => {
@@ -25,27 +25,27 @@ export const PromptScene: React.FC = () => {
 	const dots = [0, 1, 2].map((i) => 0.3 + 0.7 * Math.abs(Math.sin((frame - p.sendAt) / 4 - i * 0.7)));
 
 	return (
-		<GlitchTransition at={p.duration - 14} duration={14} slices={3} flashColors={[colors.cyan, colors.electric]}>
+		<GlitchTransition at={p.duration - 14} duration={14} slices={3} flashColors={[colors.magenta, colors.violet]}>
 			<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', perspective: 1800}}>
 				<div
 					style={{
 						width: 880,
 						borderRadius: 44,
 						overflow: 'hidden',
-						background: 'linear-gradient(150deg, rgba(31,91,255,0.18), rgba(5,11,31,0.78) 45%, rgba(5,11,31,0.85))',
-						border: '1.5px solid rgba(91,200,255,0.28)',
+						background: 'linear-gradient(150deg, rgba(123,47,247,0.32), rgba(16,8,30,0.78) 45%, rgba(10,10,15,0.86))',
+						border: '1.5px solid rgba(178,130,255,0.35)',
 						backdropFilter: 'blur(28px)',
-						boxShadow: `0 40px 120px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 90px ${colors.electric}55`,
+						boxShadow: `0 40px 120px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 90px ${colors.violet}77`,
 						transform: `scale(${zoom * (0.7 + 0.3 * enter)}) translateY(${(1 - enter) * 500}px) rotateX(${(1 - enter) * 35}deg)`,
 						opacity: Math.min(1, enter * 1.5),
 						fontFamily: fonts.body,
 					}}
 				>
-					<div style={{display: 'flex', alignItems: 'center', gap: 20, padding: '26px 34px', borderBottom: '1px solid rgba(91,200,255,0.18)'}}>
-						<Img src={staticFile(gmotion.logo)} style={{width: 72, height: 72, borderRadius: 18, boxShadow: `0 0 30px ${colors.electric}`}} />
+					<div style={{display: 'flex', alignItems: 'center', gap: 20, padding: '26px 34px', borderBottom: '1px solid rgba(178,130,255,0.22)'}}>
+						<div style={{width: 72, height: 72, borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, color: colors.white, background: `conic-gradient(from ${frame * 5}deg, ${colors.violet}, ${colors.magenta}, ${colors.orange}, ${colors.violet})`, boxShadow: `0 0 30px ${colors.violet}`}}>✦</div>
 						<div>
 							<div style={{fontFamily: fonts.display, fontWeight: 800, fontSize: 36, color: colors.white}}>{gmotion.assistantName}</div>
-							<div style={{fontSize: 26, color: colors.cyan}}>● en ligne</div>
+							<div style={{fontSize: 26, color: colors.mint}}>● en ligne</div>
 						</div>
 					</div>
 					<div style={{padding: 34, display: 'flex', flexDirection: 'column', gap: 26, minHeight: 470}}>
@@ -59,23 +59,28 @@ export const PromptScene: React.FC = () => {
 									maxWidth: '85%',
 									padding: '24px 30px',
 									borderRadius: '30px 30px 8px 30px',
-									background: `linear-gradient(135deg, ${colors.electric}, ${colors.cyan})`,
+									background: `linear-gradient(135deg, ${colors.violet}, ${colors.magenta})`,
 									color: colors.white,
 									fontSize: 38,
 									fontWeight: 600,
 									lineHeight: 1.35,
 									transform: `scale(${bubble})`,
 									transformOrigin: '100% 100%',
-									boxShadow: `0 14px 50px ${colors.electric}99`,
+									boxShadow: `0 14px 50px ${colors.violet}99`,
 								}}
 							>
-								{gmotion.prompt}
+								{gmotion.prompt.split(' ').map((w, i) => (
+									<span key={i} style={{color: gmotion.promptKeywords.includes(w) ? colors.yellow : undefined}}>
+										{i > 0 ? ' ' : ''}
+										{w}
+									</span>
+								))}
 							</div>
 						)}
 						{frame > p.sendAt + 6 && (
 							<div style={{display: 'flex', gap: 12, paddingLeft: 10}}>
 								{dots.map((o, i) => (
-									<div key={i} style={{width: 18, height: 18, borderRadius: '50%', background: colors.cyan, opacity: o, boxShadow: `0 0 14px ${colors.cyan}`}} />
+									<div key={i} style={{width: 18, height: 18, borderRadius: '50%', background: colors.yellow, opacity: o, boxShadow: `0 0 14px ${colors.yellow}`}} />
 								))}
 							</div>
 						)}
@@ -88,12 +93,12 @@ export const PromptScene: React.FC = () => {
 								gap: 20,
 								padding: '26px 28px',
 								borderRadius: 28,
-								background: 'rgba(2,6,20,0.65)',
-								border: `1.5px solid ${sent ? 'rgba(91,200,255,0.2)' : colors.cyan}`,
-								boxShadow: sent ? 'none' : `0 0 40px ${colors.cyan}44`,
+								background: 'rgba(8,4,18,0.65)',
+								border: `1.5px solid ${sent ? 'rgba(178,130,255,0.25)' : colors.magenta}`,
+								boxShadow: sent ? 'none' : `0 0 40px ${colors.magenta}55`,
 							}}
 						>
-							<div style={{flex: 1, fontSize: 46, lineHeight: 1.3, color: sent ? 'rgba(143,163,200,0.6)' : colors.white, fontWeight: 600, minHeight: 60}}>
+							<div style={{flex: 1, fontSize: 46, lineHeight: 1.3, color: sent ? 'rgba(185,179,201,0.6)' : colors.white, fontWeight: 600, minHeight: 60}}>
 								{sent ? 'Écris un message…' : typed}
 								{!sent && (
 									<span
@@ -103,8 +108,8 @@ export const PromptScene: React.FC = () => {
 											height: 54,
 											marginLeft: 4,
 											verticalAlign: 'text-bottom',
-											background: colors.cyan,
-											boxShadow: `0 0 14px ${colors.cyan}`,
+											background: colors.yellow,
+											boxShadow: `0 0 14px ${colors.yellow}`,
 											opacity: Math.floor(frame / 8) % 2 === 0 ? 1 : 0.1,
 										}}
 									/>
@@ -119,12 +124,12 @@ export const PromptScene: React.FC = () => {
 									display: 'flex',
 									alignItems: 'center',
 									justifyContent: 'center',
-									background: `linear-gradient(135deg, ${colors.electric}, ${colors.cyan})`,
+									background: `linear-gradient(135deg, ${colors.violet}, ${colors.magenta})`,
 									color: colors.white,
 									fontSize: 44,
 									fontWeight: 900,
 									transform: `scale(${press})`,
-									boxShadow: `0 0 ${frame > p.sendAt - 10 && !sent ? 50 : 18}px ${colors.cyan}`,
+									boxShadow: `0 0 ${frame > p.sendAt - 10 && !sent ? 50 : 18}px ${colors.magenta}`,
 								}}
 							>
 								↑

@@ -134,16 +134,23 @@ src/
 └── results/                ← les résultats (pub, site, tableau de bord) et leurs versions « avant »
 ```
 
-## Pub GMotionPromo (GMotion Studio)
+## Pubs GMotionPromo et GMotionPromo2 (GMotion Studio)
 
 Publicité verticale **1080×1920, 30 images/s, 15 secondes exactement, sans voix off**,
 pour les services de motion design de GMotion Studio.
 
 ```bash
 npx remotion render GMotionPromo out/gmotion-promo.mp4
+npx remotion render GMotionPromo2 out/gmotion-promo-2.mp4
 ```
 
-(ou `npm run render:gmotion`)
+(ou `npm run render:gmotion` et `npm run render:gmotion2`)
+
+Les deux pubs ont le même déroulé ; seul le client fictif change :
+`GMotionPromo` anime la marque de boissons **NOVA** (vert acide et menthe),
+`GMotionPromo2` la **Boulangerie Le Wouri** (brun doré, crème et orange).
+Pour en créer une autre, ajoute un client dans `gmotionClients` (`config.ts`)
+et sa charte dans `clientPalettes` (`theme.ts`).
 
 | Temps      | Plan              | Contenu                                                                        |
 | ---------- | ----------------- | ------------------------------------------------------------------------------ |
@@ -157,7 +164,17 @@ npx remotion render GMotionPromo out/gmotion-promo.mp4
 Les 0,5 dernière seconde est une image fixe et propre. Tout le texte reste à
 plus de 150 px du haut et du bas (zones de l'interface TikTok).
 
-- **Textes, numéro, couleurs, tempo et volumes** : objet `gmotion` dans `src/config.ts`.
+- **Textes, numéro, tempo et volumes** : objet `gmotion` dans `src/config.ts`,
+  clients fictifs dans `gmotionClients`.
+- **Couleurs** (`src/theme.ts`), en deux palettes séparées :
+  - `brandLogo` (#050B1F, #1F5BFF, #5BC8FF, blanc) : réservée au logo G et au
+    plan final. Le logo n'est jamais recoloré ;
+  - `videoPalette` : tout le reste de la vidéo (noir #0A0A0F, violet, magenta,
+    orange, jaune, menthe ; mots clés en jaune ou magenta) ;
+  - `sceneColors` : couleur dominante de chaque plan (accroche magenta, prompt
+    violet, timeline orange/jaune, avant/après menthe, plan final bleu du logo).
+    Le plan « résultat » prend la charte du client (`clientPalettes`).
+    Le fond passe d'une couleur à l'autre en fondu à chaque changement de plan.
 - **Logo** : `public/logo-G.svg`. Le tracé animé du G est dans `src/gmotion/CtaScene.tsx`.
 - **Musique** : `public/music.mp3`. Le fichier fourni est une piste électro/trap
   provisoire à 120 BPM (générée par `npm run sfx:gmotion`) : remplace-le par ta

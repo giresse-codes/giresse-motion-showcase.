@@ -12,6 +12,7 @@
     "sfx": "node scripts/generate-audio.mjs",
     "sfx:gmotion": "node scripts/generate-gmotion-audio.mjs",
     "render:gmotion": "remotion render GMotionPromo out/gmotion-promo.mp4",
+    "render:gmotion2": "remotion render GMotionPromo2 out/gmotion-promo-2.mp4",
     "render": "remotion render",
     "render:motion:vertical": "remotion render MotionDesignPromo-Vertical out/MotionDesignPromo-9x16.mp4",
     "render:motion:landscape": "remotion render MotionDesignPromo-Landscape out/MotionDesignPromo-16x9.mp4",
