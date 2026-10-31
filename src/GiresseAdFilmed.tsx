@@ -1,8 +1,7 @@
 import React from 'react';
-import {AbsoluteFill, Freeze, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {AdSound, AdVisual} from './GiresseAd';
 import {FREEZE_AT} from './timeline';
-import {Header} from './ui/kit';
 
 // Écran (orientation portrait) : la pub 1080x1920 y est affichée à l'échelle
 const SCREEN_W = 820;
@@ -40,7 +39,7 @@ export const GiresseAdFilmed: React.FC = () => {
 						<div style={{position: 'relative', width: SCREEN_W + BEZEL * 2, height: SCREEN_H + BEZEL * 2, borderRadius: 26, padding: BEZEL, background: 'linear-gradient(135deg, #2A2F3C, #0E1118 60%, #1A1E28)', boxShadow: `0 0 120px rgba(47,107,255,${0.35 * flicker}), 0 60px 120px rgba(0,0,0,0.8)`}}>
 							<div style={{position: 'relative', width: SCREEN_W, height: SCREEN_H, overflow: 'hidden', borderRadius: 6, background: '#000'}}>
 								<div style={{width: 1080, height: 1920, transform: `scale(${SCREEN_W / 1080})`, transformOrigin: '0 0'}}>
-									<AdVisual showHeader={false} />
+									<AdVisual />
 								</div>
 								{/* Reflet sur la dalle et légère trame d'écran */}
 								<div style={{position: 'absolute', inset: 0, background: 'linear-gradient(115deg, rgba(255,255,255,0.08) 0%, transparent 30%, transparent 75%, rgba(255,255,255,0.03) 100%)'}} />
@@ -54,10 +53,6 @@ export const GiresseAdFilmed: React.FC = () => {
 				{/* Vignettage */}
 				<AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(0,0,0,0.75) 100%)'}} />
 			</AbsoluteFill>
-			{/* Entête par-dessus l'image filmée */}
-			<Freeze frame={FREEZE_AT} active={(f) => f >= FREEZE_AT}>
-				<Header />
-			</Freeze>
 			<AdSound />
 		</AbsoluteFill>
 	);

@@ -42,7 +42,6 @@ npx remotion render GiresseAdFilmed out/giresse-ad-filmed.mp4
 | 22 → 26 s  | Tableau de bord    | Chiffres qui comptent, carte « 575 $ aujourd'hui », barres qui montent      |
 | 26 → 30 s  | Fin                | Logo, « GIRESSE Digital Studio », signature et WhatsApp ; image fixe 0,5 s  |
 
-L'entête « Le nouveau motion design de Claude 🤯💀 » reste affiché pendant toute la vidéo.
 Tout le texte reste à plus de 150 px du haut et du bas (zones de l'interface TikTok).
 
 ## Refaire une pub en 2 minutes

@@ -4,9 +4,6 @@
 // =============================================================================
 
 export const config = {
-	/** Entête fixe, visible pendant toute la vidéo */
-	header: 'Le nouveau motion design de Claude 🤯💀',
-
 	studio: {
 		name: 'GIRESSE Digital Studio',
 		logo: 'logo-giresse.png',

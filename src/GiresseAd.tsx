@@ -3,7 +3,7 @@ import {AbsoluteFill, Freeze, getStaticFiles, Html5Audio, Sequence, staticFile, 
 import {config} from './config';
 import {theme} from './theme';
 import {FREEZE_AT, T} from './timeline';
-import {Header, progress, Room, Stage} from './ui/kit';
+import {progress, Room, Stage} from './ui/kit';
 import {DashboardScene, InboxScene, InvoiceScene, OrderScene, PhoneScene, PillsLayer, PlanningScene} from './scenes/Scenes';
 import {EndScene} from './scenes/EndScene';
 
@@ -37,8 +37,8 @@ export const AdSound: React.FC = () => {
 	);
 };
 
-/** Contenu visuel de la pub (sans le son) ; l'entête peut être masqué pour la variante filmée */
-export const AdVisual: React.FC<{showHeader?: boolean}> = ({showHeader = true}) => {
+/** Contenu visuel de la pub (sans le son), réutilisé par la variante filmée */
+export const AdVisual: React.FC = () => {
 	const frame = useCurrentFrame();
 	// À 26 s, tout s'efface avant le logo
 	const fadeAll = 1 - progress(frame, T.end.from, 16);
@@ -56,7 +56,6 @@ export const AdVisual: React.FC<{showHeader?: boolean}> = ({showHeader = true}) 
 					<DashboardScene />
 				</Stage>
 				<EndScene />
-				{showHeader && <Header />}
 			</Freeze>
 		</AbsoluteFill>
 	);

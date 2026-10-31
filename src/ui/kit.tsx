@@ -209,10 +209,3 @@ export const Pill: React.FC<{text: string; glow: number; style?: React.CSSProper
 		{text}
 	</div>
 );
-
-/** Entête fixe en haut de l'écran */
-export const Header: React.FC = () => (
-	<div style={{position: 'absolute', top: theme.safe + 20, left: 60, right: 60, textAlign: 'center', fontFamily: theme.font, fontWeight: 800, fontSize: 56, lineHeight: 1.18, color: theme.text, textShadow: '0 4px 24px rgba(0,0,0,0.75), 0 2px 6px rgba(0,0,0,0.6)', zIndex: 100}}>
-		{config.header}
-	</div>
-);
