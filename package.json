@@ -1,0 +1,25 @@
+{
+  "name": "giresse-motion-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Publicité Remotion pour GIRESSE Digital Studio : du message au paiement, sans rien ressaisir.",
+  "scripts": {
+    "dev": "remotion studio",
+    "studio": "remotion studio",
+    "typecheck": "tsc --noEmit",
+    "sons": "node scripts/generer-sons.mjs",
+    "render": "remotion render GiresseAd out/giresse-ad.mp4",
+    "render:filmed": "remotion render GiresseAdFilmed out/giresse-ad-filmed.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.539",
+    "@remotion/google-fonts": "4.0.539",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.539"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.17",
+    "typescript": "5.9.3"
+  }
+}
