@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from multiprocessing import Pool
 W,H,FPS=1080,1920,30
 F=np.load('feat.npz'); bands,low,rms,kick=F['bands'],F['low'],F['rms'],F['kick']
-tB,tC,TOT=map(float,open('times.txt').read().split())
+tB,tC,tC2,TOT=map(float,open('times.txt').read().split())
 N=int(TOT*FPS)
 def smooth(a,k): 
     o=np.copy(a)
@@ -21,7 +21,7 @@ dist=np.sqrt((xx-cx)**2+(yy-cy)**2)/H
 vign=np.clip(1.25-np.sqrt(((xx-W/2)/W)**2+((yy-H/2)/H)**2)*1.6,0,1)[...,None]
 scan=(0.86+0.14*(np.arange(H)%4<2))[:,None,None].astype(np.float32)
 rng=np.random.default_rng(3); grains=[rng.normal(0,1,(H//2,W//2)).astype(np.float32) for _ in range(6)]
-SECT=[(0,'PHONK REMIX','// 121 BPM'),(tB,'04 — FINAL MIX','// LAYERED'),(tC,'SLOWED + REVERB','// 0.8x')]
+SECT=[(0,'PHONK REMIX','// 121 BPM'),(tB,'04 — FINAL MIX','// LAYERED'),(tC,'SLOWED + REVERB','// 0.7x — 04'),(tC2,'SLOWED + REVERB','// 0.7x — COUPLET 1')]
 def palette(t):
     if t<tB: return np.array([255,30,60]),np.array([120,0,255])
     if t<tC: return np.array([255,60,20]),np.array([255,0,120])
@@ -31,7 +31,7 @@ def frame(i):
     c1,c2=palette(t); slow=t>=tC
     L=lowS[j]; K=kickS[j]
     since=min([t-s for s,_,_ in SECT if t>=s]+[99])
-    flash=max(0,1-since*2.5)
+    flash=max(0,1-since*2.5)*(0.5 if t>=tC2 else 1)
     # fond
     g=np.exp(-dist*(3.2-1.2*L))[...,None]
     img=(g*(c1*0.16*(0.3+L)+c2*0.06))
@@ -89,7 +89,7 @@ def frame(i):
     arr=np.asarray(im.crop((l,tp,l+W,tp+H))).astype(np.float32)
     if slow: arr=arr*0.8+np.asarray(Image.fromarray(arr.astype(np.uint8)).filter(ImageFilter.GaussianBlur(6))).astype(np.float32)*0.35
     gr=np.kron(grains[i%6],np.ones((2,2),np.float32))[...,None]
-    arr=arr*scan*vign+gr*(10 if not slow else 14)
+    arr=arr*scan*vign+gr*(5 if not slow else 7)
     arr=arr+flash*255*0.85
     if t<0.8: arr*=t/0.8
     if t>TOT-2.5: arr*=max(0,(TOT-t)/2.5)
@@ -98,10 +98,11 @@ if __name__=='__main__':
     if len(sys.argv)>1:
         for k in sys.argv[1:]: Image.frombytes('RGB',(W,H),frame(int(float(k)*FPS))).save(f'prev_{k}.png')
         sys.exit()
+    import os; S0=int(os.environ.get('START_FRAME','0')); OUT=os.environ.get('OUT','phonk.mp4')
     p=subprocess.Popen(['ffmpeg','-loglevel','error','-y','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-',
-        '-i','remix_m.wav','-c:v','libx264','-preset','medium','-crf','19','-pix_fmt','yuv420p','-c:a','aac','-b:a','320k','-shortest','-movflags','+faststart','phonk.mp4'],stdin=subprocess.PIPE)
+        '-c:v','libx264','-preset','medium','-crf','19','-pix_fmt','yuv420p',OUT],stdin=subprocess.PIPE)
     with Pool(4) as pool:
-        for n,b in enumerate(pool.imap(frame,range(N),chunksize=8)):
+        for n,b in enumerate(pool.imap(frame,range(S0,N),chunksize=8)):
             p.stdin.write(b)
             if n%300==0: print(n,'/',N,flush=True)
     p.stdin.close(); p.wait()

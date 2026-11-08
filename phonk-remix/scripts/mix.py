@@ -1,111 +1,80 @@
 import numpy as np, soundfile as sf, librosa
 from pedalboard import (Pedalboard, HighpassFilter, LowpassFilter, LowShelfFilter, HighShelfFilter,
-    PeakFilter, Compressor, Distortion, Limiter, Reverb, Gain)
+    PeakFilter, Compressor, Limiter, Reverb, Gain)
 from scipy.signal import butter, sosfiltfilt, sosfilt
-x,sr=sf.read('in.wav',dtype='float32'); x=x.T.copy()  # (2,N)
-P=0.496
+x,sr=sf.read('in.wav',dtype='float32'); x=x.T.copy()
 def s(t): return int(round(t*sr))
 
-# ---------- 1. Recalage (on ne retire QUE du silence, avec fondus) ----------
+# ---------- 1. Recalage : on retire seulement 125 ms de silence dans le blanc de 0:29 ----------
 def remove_silence(x, center, dur, xf=0.008):
-    a=s(center-dur/2); b=s(center+dur/2); f=s(xf)
-    ramp=np.linspace(0,1,f,dtype='float32')
-    mid=x[:,a-f:a]*(1-ramp)+x[:,b-f:b]*ramp
-    return np.concatenate([x[:,:a-f],mid,x[:,b:]],axis=1)
-x=remove_silence(x,29.24,0.125)          # la section 2 arrivait 125 ms en retard sur la grille
-shift=0.125                               # (la section 3 suit la 2 : rien à corriger)
-FIN=77.0-shift                            # début du mixage final superposé (04)
+    a=s(center-dur/2); b=s(center+dur/2); f=s(xf); r=np.linspace(0,1,f,dtype='float32')
+    return np.concatenate([x[:,:a-f],x[:,a-f:a]*(1-r)+x[:,b-f:b]*r,x[:,b:]],axis=1)
+x=remove_silence(x,29.24,0.125); shift=0.125
+FIN=77.0-shift
+COUPLET_END=29.04            # fin du premier couplet (juste avant le blanc)
 xa=x[:,:s(FIN)]; xb=x[:,s(FIN):]
 
-def bandsplit(x,f,order=4):
-    lo=sosfiltfilt(butter(order,f,'low',fs=sr,output='sos'),x,axis=1)
-    return lo.astype('float32'),(x-lo).astype('float32')
-def ms_widen(x,amt,fcut=180):
+def ms_width(x,amt,fcut=150):
     m=(x[0]+x[1])/2; sd=(x[0]-x[1])/2
-    lo,hi=bandsplit(sd[None],fcut); sd=lo[0]*0.3+hi[0]*amt   # basse en mono, aigus plus larges
+    lo=sosfiltfilt(butter(4,fcut,'low',fs=sr,output='sos'),sd); sd=lo*0.2+(sd-lo)*amt
     return np.stack([m+sd,m-sd]).astype('float32')
+def level(y,k=0.5,lo=0.6,hi=1.3,fc=0.5):
+    e=np.sqrt(sosfilt(butter(2,fc,'low',fs=sr,output='sos'),np.mean(y**2,0)))+1e-5
+    return (y*np.clip((np.median(e)/e)**k,lo,hi)).astype('float32')
 
-# ---------- 2. Chaîne phonk pour la partie principale ----------
-phonk=Pedalboard([HighpassFilter(28),LowShelfFilter(75,3.5,0.7),PeakFilter(320,-2.5,1.0),
-    PeakFilter(3200,1.5,0.9),HighShelfFilter(9000,2.0,0.7),
-    Compressor(threshold_db=-18,ratio=3,attack_ms=15,release_ms=120)])
-drive=Pedalboard([LowpassFilter(5000),Distortion(drive_db=14),HighpassFilter(60)])
-def process_main(x):
-    y=phonk(x,sr)
-    d=drive(x,sr); d*=np.sqrt(np.mean(y**2)/(np.mean(d**2)+1e-12))
-    y=y+0.22*d                                   # saturation parallèle (grain phonk)
-    return ms_widen(y,1.25)
-A=process_main(xa)
+# ---------- 2. Partie principale : propre, chaude, sans saturation ----------
+main=Pedalboard([HighpassFilter(30),LowShelfFilter(70,2.0,0.7),PeakFilter(300,-2.0,0.9),
+    PeakFilter(3500,-1.0,1.0),HighShelfFilter(10000,-1.0,0.7),
+    Compressor(threshold_db=-20,ratio=2,attack_ms=25,release_ms=200)])
+A=ms_width(main(xa,sr),1.1)
 
-# ---------- 3. Mixage final superposé : on garde tout, on le rend lisible ----------
-def process_final(x):
-    lo,hi=bandsplit(x,120)
-    lo=Pedalboard([Compressor(-24,5,8,90),Gain(1.5)])(lo,sr)            # basse superposée tenue
-    mid,top=bandsplit(hi,2500)
-    mid=Pedalboard([PeakFilter(300,-4,0.8),PeakFilter(550,-2,1.2),Compressor(-22,3,10,100)])(mid,sr)
-    top=Pedalboard([HighShelfFilter(7000,2.5,0.7),Compressor(-26,2.5,5,80),Gain(2.0)])(top,sr)
-    y=lo+mid+top
-    y=Pedalboard([PeakFilter(1800,2.0,0.8)])(y,sr)
-    # nivellement lent : évite que la zone superposée (78-83 s) écrase le reste
-    e=np.sqrt(sosfilt(butter(2,0.7,'low',fs=sr,output='sos'),np.mean(y**2,0)))+1e-5
-    tgt=np.median(e); g=np.clip((tgt/e)**0.6,0.45,1.4)
-    y=y*g
-    d=drive(y,sr); d*=np.sqrt(np.mean(y**2)/(np.mean(d**2)+1e-12)); y=y+0.15*d
-    return ms_widen(y,1.4)
-B=process_final(xb)
+# ---------- 3. Mixage final superposé : on garde les couches, on enlève le bruit ----------
+final=Pedalboard([HighpassFilter(32),
+    PeakFilter(60,-1.5,1.0),            # basses superposées qui s'additionnent
+    PeakFilter(280,-3.5,0.8),           # boue entre les couches
+    PeakFilter(3000,-3.0,0.9),          # zone qui « gratte »
+    PeakFilter(6500,-2.5,1.2),          # sifflements
+    HighShelfFilter(9000,-3.0,0.7),LowpassFilter(15000),
+    Compressor(threshold_db=-22,ratio=2,attack_ms=30,release_ms=250)])
+B=level(final(xb,sr))*10**(0.5/20)
+B=ms_width(B,1.0)
 
-# ---------- 4. Copie slowed + reverb (0.8) ----------
-def slowed(x,rate=0.8):
-    n=int(x.shape[1]/rate)
-    y=np.stack([librosa.resample(c,orig_sr=sr,target_sr=int(sr/rate),res_type='soxr_hq') for c in x])[:, :n]
-    y=Pedalboard([LowShelfFilter(90,2.0,0.7),PeakFilter(250,-3,0.8),LowpassFilter(11000),
-        Reverb(room_size=0.82,damping=0.55,wet_level=0.28,dry_level=0.8,width=1.0),
-        Compressor(-20,2.5,20,200)])(y.astype('float32'),sr)
-    return y
-C=slowed(B)
+# ---------- 4. Slowed + reverb 0.7 : final puis premier couplet ----------
+def slowed(x,rate=0.7):
+    y=np.stack([librosa.resample(c,orig_sr=sr,target_sr=int(sr/rate),res_type='soxr_hq') for c in x]).astype('float32')
+    return Pedalboard([HighpassFilter(28),PeakFilter(220,-3,0.8),PeakFilter(2500,-2,0.9),LowpassFilter(9000),
+        Reverb(room_size=0.82,damping=0.6,wet_level=0.3,dry_level=0.8,width=1.0),
+        Compressor(-22,2,30,250),Gain(2.0)])(y,sr)
+C1=slowed(B)
+C2=slowed(A[:,:s(COUPLET_END)])
+# raccord direct : la fin du final slowed se fond dans le début du couplet slowed
+xf=s(1.2); r=np.linspace(0,1,xf,dtype='float32')
+C=np.concatenate([C1[:,:-xf],C1[:,-xf:]*np.cos(r*np.pi/2)+C2[:,:xf]*np.sin(r*np.pi/2),C2[:,xf:]],1)
 
-# ---------- 5. Effets de transition générés ----------
-def noise(n,seed=0): return np.random.default_rng(seed).standard_normal((2,n)).astype('float32')
-def riser(dur,f0=300,f1=9000):
-    n=s(dur); w=noise(n,1); env=np.linspace(0,1,n)**2.2
-    out=np.zeros_like(w); fs=np.geomspace(f0,f1,16)
-    for k in range(16):                      # bandpass glissant par blocs
-        a=k*n//16; b=(k+1)*n//16
-        sos=butter(2,[fs[k]*0.7,min(fs[k]*1.4,20000)],'band',fs=sr,output='sos')
-        out[:,a:b]=sosfilt(sos,w[:,a:b],axis=1)
-    return (out*env*0.18).astype('float32')
-def impact(dur=1.6,f0=55,f1=33):
-    n=s(dur); t=np.arange(n)/sr; f=f1+(f0-f1)*np.exp(-t*6)
-    ph=2*np.pi*np.cumsum(f)/sr; sub=np.sin(ph)*np.exp(-t*2.6)
-    sub=np.tanh(sub*2.2)*0.45
-    nz=sosfilt(butter(2,900,'low',fs=sr,output='sos'),noise(n,2)[0])*np.exp(-t*14)*0.5
-    return np.stack([sub+nz,sub+nz]).astype('float32')
-def rev_swell(seg):
-    r=Pedalboard([Reverb(room_size=0.95,damping=0.3,wet_level=1.0,dry_level=0.0)])
-    pad=np.concatenate([seg[:,::-1],np.zeros((2,s(2.0)),'float32')],1)
-    w=r(pad,sr)[:,::-1]; w=w[:, -s(1.2):]
-    return (w*np.linspace(0,1,w.shape[1])**2*0.6).astype('float32')
+# ---------- 5. Transitions douces (pas de bruit) ----------
+def impact(dur=1.4,f0=50,f1=34,a=0.35):
+    t=np.arange(s(dur))/sr; f=f1+(f0-f1)*np.exp(-t*6)
+    y=np.sin(2*np.pi*np.cumsum(f)/sr)*np.exp(-t*3)*a
+    return np.stack([y,y]).astype('float32')
+def rev_swell(seg,a=0.4):
+    r=Pedalboard([Reverb(room_size=0.95,damping=0.7,wet_level=1.0,dry_level=0.0),LowpassFilter(6000)])
+    w=r(np.concatenate([seg[:,::-1],np.zeros((2,s(2.0)),'float32')],1),sr)[:,::-1][:, -s(1.2):]
+    return (w*np.linspace(0,1,w.shape[1])**2*a).astype('float32')
 def add(dst,src,at):
     a=s(at); b=min(dst.shape[1],a+src.shape[1]); dst[:,a:b]+=src[:,:b-a]
 
-# assemblage
-gap=0.0
 out=np.concatenate([A,B,np.zeros((2,s(0.25)),'float32'),C],1)
-tB=A.shape[1]/sr; tC=tB+B.shape[1]/sr+0.25
-# reverse reverb + impact sur les trous (anciens blancs de calage)
-for g_end in [29.45-shift, 57.22-shift]:
-    add(out,rev_swell(A[:,s(g_end):s(g_end+0.8)]),g_end-1.2)
-    add(out,impact()*0.7,g_end)
-add(out,riser(3.9),tB-3.9); add(out,impact(),tB)                     # entrée du final
-# transition vers le slowed : la fin de B part en écho, puis impact profond
-tail=Pedalboard([Reverb(room_size=0.9,wet_level=1.0,dry_level=0)])(np.concatenate([B[:,-s(1.0):],np.zeros((2,s(3)),'float32')],1),sr)
-tail=tail[:,s(1.0):]*np.linspace(0.5,0,tail.shape[1]-s(1.0))
-add(out,tail.astype('float32'),tB+B.shape[1]/sr)
-add(out,impact(2.4,48,28)*0.9,tC)
+tB=A.shape[1]/sr; tC=tB+B.shape[1]/sr+0.25; tC2=tC+(C1.shape[1]-xf)/sr
+for g in [29.45-shift,57.22-shift]:
+    add(out,rev_swell(A[:,s(g):s(g+0.8)]),g-1.2); add(out,impact(a=0.25),g)
+add(out,rev_swell(B[:,:s(0.8)],0.35),tB-1.2); add(out,impact(),tB)
+tail=Pedalboard([Reverb(room_size=0.9,damping=0.7,wet_level=1.0,dry_level=0),LowpassFilter(5000)])(np.concatenate([B[:,-s(1.0):],np.zeros((2,s(3)),'float32')],1),sr)[:,s(1.0):]
+add(out,(tail*np.linspace(0.4,0,tail.shape[1])).astype('float32'),tB+B.shape[1]/sr)
+add(out,impact(2.0,44,30,0.3),tC)
 
-# ---------- 6. Master ----------
-out=Pedalboard([HighpassFilter(25),Compressor(-14,2,25,200),Gain(4.0),Limiter(-1.0,150)])(out,sr)
-fade=s(2.5); out[:,-fade:]*=np.linspace(1,0,fade)
+# ---------- 6. Master doux ----------
+out=Pedalboard([HighpassFilter(25),Compressor(-16,1.6,30,250),Gain(2.0),Limiter(-2.0,200)])(out,sr)
+fade=s(3.0); out[:,-fade:]*=np.linspace(1,0,fade)
 sf.write('remix.wav',out.T,sr,subtype='PCM_24')
-open('times.txt','w').write(f'{tB} {tC} {out.shape[1]/sr}\n')
-print('final start',tB,'slowed start',tC,'total',out.shape[1]/sr)
+open('times.txt','w').write(f'{tB} {tC} {tC2} {out.shape[1]/sr}\n')
+print('final',tB,'slowed04',tC,'slowedCouplet',tC2,'total',out.shape[1]/sr)
