@@ -30,12 +30,25 @@ Résultat : `giresse-phonk-remix.mp4` (1080×1920, 30 fps) et `giresse-phonk-rem
 
 ## Vidéo (edit)
 
-La vidéo fournie (15,8 s) passe en fond, en boucle sur tout le morceau (flash blanc à chaque reprise).
-Style lumineux façon edit : étalonnage chaud et saturé, léger bloom, light leaks, vignette légère.
-- **Remix et final** : velocity calée sur les mesures (rapide sur le temps fort, ralenti au milieu),
-  zoom punch, tremblement, aberration RGB et zoom blur sur les kicks, flash et pop-zoom à chaque partie.
-- **Slowed** : vidéo ralentie à 0.8x, mouvement doux, teinte lavande.
-- Titres de partie qui apparaissent avec un effet pop, signature discrète en bas.
+**Synchro des mouvements** : l'audio de la vidéo fournie (15,8 s) a été retrouvé dans le morceau.
+Il revient 4 fois (0:08, 0:30, 0:58, 1:24 ; corrélation 0,91). La vidéo y joue exactement sur le son,
+donc chaque mouvement tombe sur le bon mot ou le bon temps. Entre ces passages, un alignement par
+programmation dynamique (`scripts/align.py`, chroma et attaques sur des fenêtres de 3 s) choisit la partie
+de la vidéo qui correspond au son. Sur les parties slowed, la vidéo est ralentie à 0.8x et reste calée.
+Aucun effet de vitesse ne touche à la vidéo, pour ne pas casser la synchro.
+
+**Style** : mélange de trois références d'edits.
+- *Film doux* (d_ed) : noirs relevés, grain, zooms lents, flou de mouvement en transition.
+- *Énergique* (petrov_zx) : noir et blanc contrasté, miroir, blocs décalés, nom en lettres avec étincelles.
+- *Doré néon* (mikey.edits76) : lumière dorée, contours néon rose ou vert, éclairage rose latéral,
+  reflet étoile, halo blanc, gros nom qui glisse et glitche.
+
+Remix : chaud et lumineux, zooms et décalage RGB sur les kicks. Final 04 : plus nerveux (n&b, miroir,
+blocs, néon). Slowed 04 : film doux et doré. **Dernier couplet slowed** : les trois styles en alternance
+à chaque mesure, avec des transitions (flou de mouvement, zoom blur, halo) au début de chaque mesure.
+
+**Nom** : « GIRESSE » apparaît 10 fois, environ 3 à 4 s à chaque fois, en se déplaçant avec l'un des trois
+styles, puis disparaît.
 
 ## Régénérer
 
@@ -45,5 +58,6 @@ python scripts/mix.py      # in.wav -> remix.wav (+ times.txt)
 ffmpeg -i remix.wav -af "aresample=192000,alimiter=limit=0.84:attack=2:release=120:level=disabled,aresample=48000" remix_m.wav
 python scripts/feat.py     # caractéristiques audio par image
 ffmpeg -i fond.mp4 -f rawvideo -pix_fmt rgb24 bg/src.rgb   # vidéo de fond (478x850)
+python scripts/align.py    # synchro vidéo/son -> segs.npy
 python scripts/edit.py     # -> edit_raw.mp4 (puis muxer avec remix_m.wav)
 ```
