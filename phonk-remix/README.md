@@ -63,3 +63,12 @@ ffmpeg -i fond.mp4 -f rawvideo -pix_fmt rgb24 bg/src.rgb   # vidéo de fond (478
 python scripts/align.py    # synchro vidéo/son -> segs.npy
 python scripts/edit.py     # -> edit_raw.mp4 (puis muxer avec remix_m.wav)
 ```
+
+## Version courte (v3, 44 s)
+
+1. Intro : les 9,07 premières secondes de l'edit (avec le nom GIRESSE, inchangé) en **speed up 1.25x**
+   (tempo et hauteur montés).
+2. Directement après : l'edit à partir de **2:21** (fin du slowed 04 puis dernier couplet slowed) jusqu'à la fin.
+   Cette partie a été re-rendue **sans le nom** : il n'apparaît qu'au début.
+
+Raccord : flash blanc de 0,25 s et fondu audio de 60 ms. Script : `scripts/assemble_v3.sh`.

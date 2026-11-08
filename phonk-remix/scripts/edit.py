@@ -1,4 +1,4 @@
-import numpy as np, sys, subprocess, math
+import numpy as np, sys, subprocess, math, os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from multiprocessing import Pool
 W,H,FPS=1080,1920,30; w,h=540,960          # traitement à 540x960 puis upscale
@@ -161,7 +161,7 @@ FB=ImageFont.truetype('/usr/share/fonts/opentype/inter/InterDisplay-Black.otf',8
 FI=ImageFont.truetype('/usr/share/fonts/opentype/inter/InterDisplay-BlackItalic.otf',76)
 FL=ImageFont.truetype('/usr/share/fonts/opentype/inter/Inter-Bold.otf',62)
 FR=ImageFont.truetype('/usr/share/fonts/opentype/inter/Inter-SemiBold.otf',26)
-NAMES=[(1.0,3.4,0),(21.5,3.2,1),(46.5,3.2,2),(77.2,3.4,0),(99.0,3.2,2),(107.2,4.0,1),(126.0,4.0,2),(142.6,4.2,0),(156.0,4.0,1),(170.0,4.0,2)]
+NAMES=[(1.0,3.4,0)]   # le nom n'apparaît qu'au début
 def ease(x): return x*x*(3-2*x)
 def name_layer(im,t,i):
     for t0,dur,sty in NAMES:
@@ -214,9 +214,9 @@ if __name__=='__main__':
         for q in sys.argv[1:]: Image.frombytes('RGB',(W,H),frame(int(float(q)*FPS))).save(f'e2_{q}.png')
         sys.exit()
     p=subprocess.Popen(['ffmpeg','-loglevel','error','-y','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-',
-        '-c:v','libx264','-preset','veryfast','-crf','16','-pix_fmt','yuv420p','edit_raw.mp4'],stdin=subprocess.PIPE)
+        '-c:v','libx264','-preset','veryfast','-crf','16','-pix_fmt','yuv420p',os.environ.get('OUT','edit_raw.mp4')],stdin=subprocess.PIPE)
     with Pool(4) as pool:
-        for n,b in enumerate(pool.imap(frame,range(N),chunksize=8)):
+        for n,b in enumerate(pool.imap(frame,range(int(os.environ.get('START_FRAME','0')),N),chunksize=8)):
             p.stdin.write(b)
             if n%300==0: print(n,'/',N,flush=True)
     p.stdin.close(); p.wait(); print('done',flush=True)
