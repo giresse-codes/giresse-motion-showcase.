@@ -39,8 +39,8 @@ final=Pedalboard([HighpassFilter(32),
 B=level(final(xb,sr))*10**(0.5/20)
 B=ms_width(B,1.0)
 
-# ---------- 4. Slowed + reverb 0.7 : final puis premier couplet ----------
-def slowed(x,rate=0.7):
+# ---------- 4. Slowed + reverb 0.8 : final puis premier couplet ----------
+def slowed(x,rate=0.8):
     y=np.stack([librosa.resample(c,orig_sr=sr,target_sr=int(sr/rate),res_type='soxr_hq') for c in x]).astype('float32')
     return Pedalboard([HighpassFilter(28),PeakFilter(220,-3,0.8),PeakFilter(2500,-2,0.9),LowpassFilter(9000),
         Reverb(room_size=0.82,damping=0.6,wet_level=0.3,dry_level=0.8,width=1.0),
