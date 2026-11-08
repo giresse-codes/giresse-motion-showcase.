@@ -92,7 +92,7 @@ def star(a,amt,i):
 def mirror4(a):
     t=a[:h//2,:w//2]; top=np.concatenate([t,t[:,::-1]],1); return np.concatenate([top,top[::-1]],0)
 # ---------- programmes de looks (mélange des 3 styles) ----------
-LOOK_D=['film','gold','bw','neon','film_zoom','mirror','gold_pink','bloom']   # dernier couplet : mélange complet
+LOOK_D=['film_zoom','gold','bw','neon','film','mirror','gold_pink','bloom','neon','gold']   # dernier couplet : mélange complet
 LOOK_C=['film','gold','film_zoom','gold_pink']
 LOOK_B=['warm','warm','bw','warm_neon','warm','mirror','warm','gold']
 def frame(i):
@@ -139,6 +139,13 @@ def frame(i):
         ca=int(2+10*k); a[...,0]=np.roll(a[...,0],ca,1); a[...,2]=np.roll(a[...,2],-ca,1)
     if sec=='B' and k>0.6: a=blocks(a,i,k)
     if slow and k>0.5 and sec=='D': a=zoom_blur(a,k)
+    if sec=='D':   # bouquet final : les 3 styles se superposent en plus du look de la mesure
+        if k>0.55: a=blocks(a,i,k*0.7)                                   # petrov : blocs décalés
+        if bt<0.12 and bar%2==1: a=g_bw(a)                               # petrov : flash n&b sur le temps
+        if look not in('gold','gold_pink'): a=star(a,0.5*(0.5+0.5*math.sin(t*2.3)),i)   # mikey : reflet étoile
+        if bar%4==3: a=pink_light(a,0.35,-1 if bar%8==3 else 1)          # mikey : lumière rose
+        a=a*0.94+12+GR[i%8]*6                                            # d_ed : grain film, noirs relevés
+        ca=int(3+6*k); a[...,0]=np.roll(a[...,0],ca,1); a[...,2]=np.roll(a[...,2],-ca,1)
     a=a*vign+GR[(i*3)%8]*4
     # fondu blanc d'ouverture, flash aux changements de partie
     for s in (tB,tC,tC2):
