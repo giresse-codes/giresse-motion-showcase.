@@ -150,10 +150,10 @@ def frame(i):
     im=name_layer(im,t,i)
     return im.tobytes()
 # ---------- le nom GIRESSE qui passe de temps en temps ----------
-FB=ImageFont.truetype('/usr/share/fonts/opentype/inter/InterDisplay-Black.otf',200)
-FI=ImageFont.truetype('/usr/share/fonts/opentype/inter/InterDisplay-BlackItalic.otf',170)
-FL=ImageFont.truetype('/usr/share/fonts/opentype/inter/Inter-Bold.otf',120)
-FR=ImageFont.truetype('/usr/share/fonts/opentype/inter/Inter-SemiBold.otf',46)
+FB=ImageFont.truetype('/usr/share/fonts/opentype/inter/InterDisplay-Black.otf',84)
+FI=ImageFont.truetype('/usr/share/fonts/opentype/inter/InterDisplay-BlackItalic.otf',76)
+FL=ImageFont.truetype('/usr/share/fonts/opentype/inter/Inter-Bold.otf',62)
+FR=ImageFont.truetype('/usr/share/fonts/opentype/inter/Inter-SemiBold.otf',26)
 NAMES=[(1.0,3.4,0),(21.5,3.2,1),(46.5,3.2,2),(77.2,3.4,0),(99.0,3.2,2),(107.2,4.0,1),(126.0,4.0,2),(142.6,4.2,0),(156.0,4.0,1),(170.0,4.0,2)]
 def ease(x): return x*x*(3-2*x)
 def name_layer(im,t,i):
@@ -166,40 +166,40 @@ def name_layer(im,t,i):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay)
     txt='GIRESSE'
     if sty==0:   # gros blanc qui glisse et glitche (mikey)
-        f=FB; tw=d.textlength(txt,font=f); px=W/2-tw/2+(x-0.5)*-260; py=H*0.40+math.sin(x*5)*40
+        f=FB; tw=d.textlength(txt,font=f); px=W/2-tw/2+(x-0.5)*-120; py=H*0.835+math.sin(x*5)*10
         nshow=len(txt)
         d.text((px,py),txt,font=f,fill=(255,255,255,int(255*alpha)))
-        d.text((W/2-d.textlength('remix',font=FR)/2+(x-0.5)*120,py+230),'remix',font=FR,fill=(255,255,255,int(200*alpha)))
+        d.text((W/2-d.textlength('remix',font=FR)/2+(x-0.5)*120,py+100),'remix',font=FR,fill=(255,255,255,int(200*alpha)))
         glow_col=(255,255,255); slices=True
     elif sty==1: # néon rose qui grossit (mikey/purr)
-        sc=0.85+0.3*ease(x); f=ImageFont.truetype(FI.path,int(170*sc)); tw=d.textlength(txt,font=f)
-        px=W/2-tw/2; py=H*0.30-f.size/2+math.sin(x*4)*30
+        sc=0.9+0.15*ease(x); f=ImageFont.truetype(FI.path,int(76*sc)); tw=d.textlength(txt,font=f)
+        px=W/2-tw/2; py=H*0.85-f.size/2+math.sin(x*4)*8
         d.text((px,py),txt,font=f,fill=(255,120,230,int(255*alpha)))
         glow_col=(255,40,200); slices=False
     else:        # lettres qui apparaissent une à une avec étincelles (petrov)
-        f=FL; tw=d.textlength(txt,font=f); px=W/2-tw/2+math.sin(x*3)*60; py=H*0.62+(0.5-x)*120
+        f=FL; tw=d.textlength(txt,font=f); px=W/2-tw/2+math.sin(x*3)*25; py=H*0.85+(0.5-x)*30
         n=min(len(txt),int(x*len(txt)*3.5)+1); cx=px
         for q,ch in enumerate(txt):
             cw=d.textlength(ch,font=f)
-            if q<n: d.text((cx,py+math.sin(q*1.3+x*8)*10),ch,font=f,fill=(225,235,255,int(255*alpha)))
+            if q<n: d.text((cx,py+math.sin(q*1.3+x*8)*4),ch,font=f,fill=(225,235,255,int(255*alpha)))
             cx+=cw
         for s in range(18):
-            sx=px+r.uniform(0,tw)+math.sin(x*6+s)*20; sy=py+r.uniform(-30,150)-x*80*r.random()
-            rr=r.uniform(2,6); d.ellipse([sx-rr,sy-rr,sx+rr,sy+rr],fill=(160,210,255,int(230*alpha*r.random())))
+            sx=px+r.uniform(0,tw)+math.sin(x*6+s)*20; sy=py+r.uniform(-15,75)-x*40*r.random()
+            rr=r.uniform(1.5,3.5); d.ellipse([sx-rr,sy-rr,sx+rr,sy+rr],fill=(160,210,255,int(230*alpha*r.random())))
         glow_col=(120,170,255); slices=False
     A=np.asarray(lay).astype(np.float32)
-    gl=np.asarray(lay.filter(ImageFilter.GaussianBlur(18))).astype(np.float32)
+    gl=np.asarray(lay.filter(ImageFilter.GaussianBlur(9))).astype(np.float32)
     if slices and x>0.05:     # tranches qui glissent + séparation RGB
         rr=np.random.default_rng(i)
         for _ in range(4):
-            y0=rr.integers(int(H*0.38),int(H*0.55)); hh=rr.integers(10,40); A[y0:y0+hh]=np.roll(A[y0:y0+hh],rr.integers(-50,50),1)
+            y0=rr.integers(int(H*0.83),int(H*0.88)); hh=rr.integers(5,18); A[y0:y0+hh]=np.roll(A[y0:y0+hh],rr.integers(-20,20),1)
     base=np.asarray(im).astype(np.float32)
     al=A[...,3:]/255; ga=gl[...,3:]/255
-    sd=np.asarray(lay.filter(ImageFilter.GaussianBlur(10))).astype(np.float32)[...,3:]/255
-    base=base*(1-0.55*np.roll(np.roll(sd,6,0),6,1))
-    base=base+ga*np.array(glow_col)*0.6*alpha
+    sd=np.asarray(lay.filter(ImageFilter.GaussianBlur(5))).astype(np.float32)[...,3:]/255
+    base=base*(1-0.5*np.roll(np.roll(sd,3,0),3,1))
+    base=base+ga*np.array(glow_col)*0.4*alpha
     if slices:
-        sh=8; base[...,0]+=np.roll(al[...,0],sh,1)*80; base[...,2]+=np.roll(al[...,0],-sh,1)*80
+        sh=4; base[...,0]+=np.roll(al[...,0],sh,1)*80; base[...,2]+=np.roll(al[...,0],-sh,1)*80
     base=base*(1-al)+A[...,:3]*al
     return Image.fromarray(np.clip(base,0,255).astype(np.uint8))
 if __name__=='__main__':

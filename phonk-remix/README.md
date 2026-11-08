@@ -47,7 +47,7 @@ Remix : chaud et lumineux, zooms et décalage RGB sur les kicks. Final 04 : plus
 blocs, néon). Slowed 04 : film doux et doré. **Dernier couplet slowed** : les trois styles en alternance
 à chaque mesure, avec des transitions (flou de mouvement, zoom blur, halo) au début de chaque mesure.
 
-**Nom** : « GIRESSE » apparaît 10 fois, environ 3 à 4 s à chaque fois, en se déplaçant avec l'un des trois
+**Nom** : « GIRESSE » apparaît 10 fois en petit, en bas de l'écran, environ 3 à 4 s à chaque fois, en bougeant légèrement avec l'un des trois
 styles, puis disparaît.
 
 ## Régénérer
